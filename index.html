@@ -52,6 +52,11 @@
 .daily-empty{padding:55px 20px;text-align:center;color:var(--muted)}
 @media(max-width:800px){.daily-card{grid-template-columns:1fr}.calendar-toolbar{flex-wrap:wrap}}
 
+
+.daily-card .row-actions{justify-content:flex-end;flex-wrap:wrap}
+.daily-card .row-actions .small-btn{min-width:38px}
+.project-card header{align-items:flex-start}
+
 </style>
 </head>
 <body>
@@ -176,7 +181,8 @@
 
   <dialog id="projectDialog">
     <form id="projectForm" class="modal">
-      <h2>Add Project</h2>
+      <h2 id="projectDialogTitle">Add Project</h2>
+      <input type="hidden" id="projectId">
       <label>Project name<input id="projectName" required></label>
       <label>Country<select id="projectCountry" required></select></label>
       <div class="modal-actions">
@@ -915,14 +921,37 @@ function renderCalendar(){
     else d=new Date(y,m,i-start+1);
     const key=dateKey(d),today=key===dateKey(new Date());
     const events=filteredAssignments().filter(a=>a.date===key);
+    const grouped=Object.values(events.reduce((acc,a)=>{
+      const k=a.projectId;
+      if(!acc[k])acc[k]={projectId:k,items:[]};
+      acc[k].items.push(a);
+      return acc;
+    },{}));
     html+=`<div class="day ${muted?"muted":""} ${today?"today":""}" data-date="${key}">
       <div class="day-num">${d.getDate()}</div>
-      ${events.map(a=>{const p=state.projects[a.projectId],e=state.employees[a.employeeId];return `<button class="event ${a.status==="Pending"?"pending":""}" data-assignment="${a.id}"><b>${esc(p?.name||"Unknown project")}</b><small>${esc(e?.name||"Unknown")} · ${a.hours}h</small></button>`}).join("")}
+      ${grouped.map(group=>{
+        const p=state.projects[group.projectId];
+        const pending=group.items.some(a=>a.status==="Pending");
+        const totalHours=group.items.reduce((t,a)=>t+Number(a.hours||0),0);
+        const names=group.items.map(a=>state.employees[a.employeeId]?.name||"Unknown");
+        return `<button class="event ${pending?"pending":""}" data-project-group="${group.projectId}" data-date="${key}" title="${esc(names.join(", "))}">
+          <b>${esc(p?.name||"Unknown project")}</b>
+          <small>${group.items.length} manpower · ${totalHours}h</small>
+        </button>`;
+      }).join("")}
     </div>`;
   }
   $("calendarGrid").className="calendar-grid";
   $("calendarGrid").innerHTML=html;
-  document.querySelectorAll(".event").forEach(b=>b.onclick=()=>openAssignment(b.dataset.assignment));
+  document.querySelectorAll(".event").forEach(b=>b.onclick=()=>{
+    if(b.dataset.projectGroup){
+      state.month=new Date(b.dataset.date+"T00:00");
+      state.calendarMode="day";
+      renderCalendar();
+    }else if(b.dataset.assignment){
+      openAssignment(b.dataset.assignment);
+    }
+  });
   document.querySelectorAll(".day").forEach(cell=>{
     cell.ondblclick=()=>openAssignment(null,cell.dataset.date);
     cell.querySelector(".day-num").onclick=()=>{
@@ -935,24 +964,42 @@ function renderCalendar(){
 function renderDailyCalendar(){
   const key=dateKey(state.month);
   const items=filteredAssignments().filter(a=>a.date===key);
+  const groups=Object.values(items.reduce((acc,a)=>{
+    const k=a.projectId;
+    if(!acc[k])acc[k]={projectId:k,items:[]};
+    acc[k].items.push(a);
+    return acc;
+  },{}));
   $("monthLabel").textContent=state.month.toLocaleDateString("en",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   $("metricAssignments").textContent=items.length;
   $("metricManpower").textContent=new Set(items.map(a=>a.employeeId)).size;
   $("metricHours").textContent=items.reduce((t,a)=>t+Number(a.hours||0),0)+"h";
   $("calendarGrid").className="daily-view";
-  $("calendarGrid").innerHTML=items.length?`
+  $("calendarGrid").innerHTML=groups.length?`
     <div class="daily-summary">
       <span class="daily-pill"><b>${items.length}</b> assignments</span>
       <span class="daily-pill"><b>${new Set(items.map(a=>a.employeeId)).size}</b> manpower</span>
       <span class="daily-pill"><b>${items.reduce((t,a)=>t+Number(a.hours||0),0)}h</b> booked</span>
     </div>
     <div class="daily-list">
-      ${items.map((a,index)=>{const p=state.projects[a.projectId],e=state.employees[a.employeeId];return `<button class="daily-card ${a.status==="Pending"?"pending":""}" data-assignment="${a.id}">
-        <strong>${pad(8+index)}:00</strong>
-        <div><h3>${esc(p?.name||"Unknown project")}</h3><p>${esc(e?.name||"Unknown")} · ${esc(e?.position||"")} · ${a.hours}h</p></div>
-        <span>${esc(a.status||"Confirmed")}</span>
-      </button>`}).join("")}
-    </div>`:`<div class="daily-empty">No assignments for this day. Double-click the month date or use “+ Assignment” to add one.</div>`;
+      ${groups.map((group,index)=>{
+        const p=state.projects[group.projectId];
+        const pending=group.items.some(a=>a.status==="Pending");
+        const totalHours=group.items.reduce((t,a)=>t+Number(a.hours||0),0);
+        const people=group.items.map(a=>state.employees[a.employeeId]).filter(Boolean);
+        return `<div class="daily-card ${pending?"pending":""}">
+          <strong>${pad(8+index)}:00</strong>
+          <div>
+            <h3>${esc(p?.name||"Unknown project")}</h3>
+            <p>${group.items.length} manpower · ${totalHours}h</p>
+            <p>${people.map(e=>esc(e.name)).join(", ")}</p>
+          </div>
+          <div class="row-actions">
+            ${group.items.map(a=>`<button class="small-btn" data-assignment="${a.id}">${esc(state.employees[a.employeeId]?.initials||"Edit")}</button>`).join("")}
+          </div>
+        </div>`;
+      }).join("")}
+    </div>`:`<div class="daily-empty">No assignments for this day. Use “+ Assignment” to add one.</div>`;
   document.querySelectorAll("[data-assignment]").forEach(b=>b.onclick=()=>openAssignment(b.dataset.assignment));
 }
 
@@ -967,7 +1014,7 @@ function renderEmployees(){
 function renderProjects(){
   $("projectList").innerHTML=projectValues().map(p=>{
     const count=assignmentValues().filter(a=>a.projectId===p.id).length;
-    return `<article class="project-card"><header><strong>${esc(p.name)}</strong></header><p>${esc(p.country)} · ${count} assignment${count===1?"":"s"}</p></article>`;
+    return `<article class="project-card"><header><strong>${esc(p.name)}</strong><div class="row-actions"><button class="small-btn" data-edit-project="${p.id}">Edit</button><button class="small-btn delete" data-delete-project="${p.id}">Delete</button></div></header><p>${esc(p.country)} · ${count} assignment${count===1?"":"s"}</p></article>`;
   }).join("")||`<div class="empty">No projects.</div>`;
 }
 
@@ -1013,6 +1060,15 @@ function deleteEmployee(id){
   linked.forEach(a=>delete state.assignments[a.id]);
   delete state.employees[id];scheduleSave();renderAll();
 }
+function openProject(id=null){
+  const p=id?state.projects[id]:null;
+  $("projectDialogTitle").textContent=p?"Edit Project":"Add Project";
+  $("projectId").value=p?.id||"";
+  $("projectName").value=p?.name||"";
+  populateProjectCountry();
+  $("projectCountry").value=p?.country||state.country;
+  $("projectDialog").showModal();
+}
 function deleteProject(id){
   const p=state.projects[id];if(!p)return;
   const linked=assignmentValues().filter(a=>a.projectId===id);
@@ -1047,15 +1103,20 @@ $("employeeForm").onsubmit=e=>{
   $("employeeDialog").close();scheduleSave();renderAll();
 };
 $("projectForm").onsubmit=e=>{
-  e.preventDefault();const id=uid("project");
+  e.preventDefault();
+  const id=$("projectId").value||uid("project");
   state.projects[id]={id,name:$("projectName").value.trim(),country:normalizeCountry($("projectCountry").value),active:true};
-  $("projectName").value="";$("projectDialog").close();scheduleSave();renderAll();
+  $("projectName").value="";
+  $("projectId").value="";
+  $("projectDialog").close();
+  scheduleSave();
+  renderAll();
 };
 
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).close());
 $("addAssignmentBtn").onclick=()=>openAssignment();
 $("addEmployeeBtn").onclick=()=>openEmployee();
-$("addProjectBtn").onclick=()=>{populateProjectCountry();$("projectDialog").showModal()};
+$("addProjectBtn").onclick=()=>openProject();
 $("employeeSearch").oninput=renderEmployees;
 $("prevMonth").onclick=()=>{state.calendarMode==="day"?state.month.setDate(state.month.getDate()-1):state.month.setMonth(state.month.getMonth()-1);renderCalendar()};
 $("nextMonth").onclick=()=>{state.calendarMode==="day"?state.month.setDate(state.month.getDate()+1):state.month.setMonth(state.month.getMonth()+1);renderCalendar()};
