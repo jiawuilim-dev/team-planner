@@ -88,5 +88,175 @@
     let activeTeam='project';const teamOf=name=>(engineers.find(person=>person[0]===name)||[])[3];function applyTeamCalendar(){const teamName=activeTeam==='project'?'Project Team':'Service Team';document.querySelectorAll('[data-team]').forEach(button=>button.classList.toggle('active',button.dataset.team===activeTeam));document.getElementById('pageTitle').textContent=teamName+' Calendar';document.getElementById('pageSub').textContent=activeTeam==='project'?'Project manpower assignments and capacity':'Service manpower assignments and capacity';document.querySelectorAll('#teamList .person').forEach(person=>person.hidden=teamOf(person.dataset.engineer)!==activeTeam);if(viewMode==='month'){days.querySelectorAll('.day').forEach(cell=>{const date=cell.dataset.assignmentDate;cell.querySelectorAll('.event').forEach(event=>{const matching=assignments.filter(a=>a.date===date&&a.project===event.dataset.project&&teamOf(a.engineer)===activeTeam);event.hidden=!matching.length;if(!matching.length)return;event.innerHTML=projectNames[event.dataset.project]+' <small>· '+(matching.length>1?matching.length+' Manpower':matching[0].engineer.split(' ')[0])+'</small>';event.dataset.grouped=matching.length>1?'true':''})})}else{const visible=assignments.filter(a=>a.date===fmt(activeDate)&&teamOf(a.engineer)===activeTeam),hours=visible.reduce((total,a)=>total+a.hours,0),people=new Set(visible.map(a=>a.engineer)).size;days.querySelectorAll('[data-assignment-index]').forEach(row=>row.hidden=teamOf(assignments[Number(row.dataset.assignmentIndex)].engineer)!==activeTeam);days.querySelectorAll('.project-balloon').forEach(balloon=>{const rows=[...balloon.querySelectorAll('[data-assignment-index]')].filter(row=>!row.hidden),meta=balloon.querySelector('.balloon-meta');balloon.hidden=!rows.length;if(rows.length&&meta){const groupHours=rows.reduce((total,row)=>total+assignments[Number(row.dataset.assignmentIndex)].hours,0);meta.textContent=rows.length+' Manpower · '+groupHours+'h'}});const stats=days.querySelectorAll('.daily-stat b');if(stats.length){stats[0].textContent=visible.length;stats[1].textContent=people;stats[2].textContent=hours+'h'}}}const calendarRender=render;render=function(){calendarRender();applyTeamCalendar()};function openAssignment(assignment=null,date=fmt(activeDate)){editingAssignment=assignment;document.querySelector('#assignmentDialog h2').textContent=assignment?'Edit Assignment':'Assign Manpower';document.getElementById('deleteAssignment').hidden=!assignment;document.getElementById('project').innerHTML=Object.entries(projectFullNames).map(([key,name])=>'<option value="'+key+'">'+name+'</option>').join('');const available=engineers.filter(person=>person[3]===activeTeam);document.getElementById('engineer').innerHTML=available.map(([name])=>'<option>'+name+'</option>').join('');document.getElementById('project').value=assignment?assignment.project:selectedProject;document.getElementById('engineer').value=assignment?assignment.engineer:available[0][0];document.getElementById('assignmentDate').value=assignment?assignment.date:date;document.getElementById('endDate').value=assignment?assignment.date:date;document.getElementById('hours').value=assignment?assignment.hours:8;document.getElementById('status').value=assignment?(assignment.status||'Confirmed'):'Confirmed';dialog.showModal()}document.querySelectorAll('[data-team]').forEach(button=>button.onclick=()=>{activeTeam=button.dataset.team;render()});render();
     function openCreate(type){createType=type;document.getElementById('createTitle').textContent=type==='project'?'Add Project':'Add Manpower';document.getElementById('createNameLabel').firstChild.textContent=type==='project'?'Project Name':'Manpower Name';document.getElementById('createRoleLabel').hidden=type==='project';document.getElementById('createTeamLabel').hidden=type==='project';document.getElementById('createTeam').value=activeTeam;document.getElementById('createName').value='';document.getElementById('createDialog').showModal()}const oldCreateForm=document.getElementById('createForm'),newCreateForm=oldCreateForm.cloneNode(true);oldCreateForm.replaceWith(newCreateForm);document.getElementById('createName').addEventListener('input',e=>{const cursor=e.target.selectionStart;e.target.value=capitaliseTypedWords(e.target.value);e.target.setSelectionRange(cursor,cursor)});newCreateForm.addEventListener('submit',e=>{if(e.submitter.id!=='saveCreate')return;e.preventDefault();const name=titleCase(document.getElementById('createName').value);if(!name)return;if(createType==='project'){const key='custom'+Date.now();projectFullNames[key]=name;projectNames[key]=name;selectedProject=key}else{const initials=name.split(' ').map(word=>word[0]).join('').slice(0,2).toUpperCase();engineers.push([name,initials,document.getElementById('createRole').value,document.getElementById('createTeam').value])}document.getElementById('createDialog').close();render()});newCreateForm.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName!=='SELECT'){e.preventDefault();newCreateForm.requestSubmit(newCreateForm.querySelector('.primary'))}});
   </script>
+
+  <!-- Firebase shared online saving -->
+  <script>
+  (async function () {
+    const status = document.createElement('div');
+    status.id = 'firebaseSaveStatus';
+    Object.assign(status.style, {
+      position: 'fixed',
+      right: '18px',
+      bottom: '18px',
+      zIndex: '9999',
+      padding: '8px 12px',
+      borderRadius: '8px',
+      background: '#172a58',
+      color: '#fff',
+      font: '600 12px/1.2 system-ui, sans-serif',
+      boxShadow: '0 8px 24px rgba(0,0,0,.18)'
+    });
+    status.textContent = 'Connecting…';
+    document.body.appendChild(status);
+
+    const setStatus = (text, error = false) => {
+      status.textContent = text;
+      status.style.background = error ? '#b42318' : '#172a58';
+    };
+
+    try {
+      const [{ initializeApp }, {
+        getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp
+      }] = await Promise.all([
+        import('https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js'),
+        import('https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js')
+      ]);
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyB2BiCD0Va9TxY9KYtCEh8o4oV5PMiayYU",
+        authDomain: "team-planner-3b86d.firebaseapp.com",
+        projectId: "team-planner-3b86d",
+        storageBucket: "team-planner-3b86d.firebasestorage.app",
+        messagingSenderId: "984036405194",
+        appId: "1:984036405194:web:3ce489ab14e808df726933"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const sharedRef = doc(db, 'planner', 'shared');
+
+      let applyingRemote = false;
+      let ready = false;
+      let lastState = '';
+
+      function currentState() {
+        return {
+          version: 1,
+          projects: { ...projectFullNames },
+          projectShortNames: { ...projectNames },
+          engineers: engineers.map(person => [...person]),
+          assignments: assignments.map(item => ({ ...item }))
+        };
+      }
+
+      function serialiseState() {
+        return JSON.stringify(currentState());
+      }
+
+      function applyState(data) {
+        if (!data) return;
+        applyingRemote = true;
+
+        if (data.projects && typeof data.projects === 'object') {
+          Object.keys(projectFullNames).forEach(key => delete projectFullNames[key]);
+          Object.assign(projectFullNames, data.projects);
+        }
+
+        if (data.projectShortNames && typeof data.projectShortNames === 'object') {
+          Object.keys(projectNames).forEach(key => delete projectNames[key]);
+          Object.assign(projectNames, data.projectShortNames);
+        } else if (data.projects) {
+          Object.keys(projectNames).forEach(key => delete projectNames[key]);
+          Object.assign(projectNames, data.projects);
+        }
+
+        if (Array.isArray(data.engineers)) {
+          engineers.splice(0, engineers.length, ...data.engineers.map(person => [...person]));
+        }
+
+        if (Array.isArray(data.assignments)) {
+          assignments.splice(0, assignments.length, ...data.assignments.map(item => ({ ...item })));
+        }
+
+        if (!projectFullNames[selectedProject]) {
+          selectedProject = Object.keys(projectFullNames)[0] || '';
+        }
+
+        lastState = serialiseState();
+        applyingRemote = false;
+
+        const activePage = document.querySelector('nav button.active')?.dataset.page || 'calendar';
+        if (activePage === 'calendar') render();
+        else renderSecondary(activePage);
+      }
+
+      const firstSnapshot = await getDoc(sharedRef);
+      if (firstSnapshot.exists()) {
+        applyState(firstSnapshot.data());
+        setStatus('Loaded online');
+      } else {
+        await setDoc(sharedRef, {
+          ...currentState(),
+          updatedAt: serverTimestamp()
+        });
+        lastState = serialiseState();
+        setStatus('Saved online');
+      }
+
+      ready = true;
+
+      onSnapshot(sharedRef, snapshot => {
+        if (!snapshot.exists() || !ready) return;
+        const incoming = snapshot.data();
+        const comparable = JSON.stringify({
+          version: incoming.version || 1,
+          projects: incoming.projects || {},
+          projectShortNames: incoming.projectShortNames || {},
+          engineers: incoming.engineers || [],
+          assignments: incoming.assignments || []
+        });
+        if (comparable !== lastState) {
+          applyState(incoming);
+          setStatus('Updated online');
+        }
+      }, error => {
+        console.error('Firestore live update error:', error);
+        setStatus('Sync error', true);
+      });
+
+      let saveTimer = null;
+      setInterval(() => {
+        if (!ready || applyingRemote) return;
+        const nextState = serialiseState();
+        if (nextState === lastState) return;
+
+        clearTimeout(saveTimer);
+        setStatus('Saving…');
+        saveTimer = setTimeout(async () => {
+          try {
+            const state = currentState();
+            await setDoc(sharedRef, {
+              ...state,
+              updatedAt: serverTimestamp()
+            });
+            lastState = JSON.stringify(state);
+            setStatus('Saved online');
+          } catch (error) {
+            console.error('Firestore save error:', error);
+            setStatus('Save failed', true);
+          }
+        }, 500);
+      }, 600);
+
+      window.addEventListener('online', () => setStatus('Online'));
+      window.addEventListener('offline', () => setStatus('Offline', true));
+
+    } catch (error) {
+      console.error('Firebase initialization error:', error);
+      setStatus('Firebase failed', true);
+    }
+  })();
+  </script>
+
 </body>
 </html>
