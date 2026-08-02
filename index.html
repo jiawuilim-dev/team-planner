@@ -89,27 +89,33 @@
     function openCreate(type){createType=type;document.getElementById('createTitle').textContent=type==='project'?'Add Project':'Add Manpower';document.getElementById('createNameLabel').firstChild.textContent=type==='project'?'Project Name':'Manpower Name';document.getElementById('createRoleLabel').hidden=type==='project';document.getElementById('createTeamLabel').hidden=type==='project';document.getElementById('createTeam').value=activeTeam;document.getElementById('createName').value='';document.getElementById('createDialog').showModal()}const oldCreateForm=document.getElementById('createForm'),newCreateForm=oldCreateForm.cloneNode(true);oldCreateForm.replaceWith(newCreateForm);document.getElementById('createName').addEventListener('input',e=>{const cursor=e.target.selectionStart;e.target.value=capitaliseTypedWords(e.target.value);e.target.setSelectionRange(cursor,cursor)});newCreateForm.addEventListener('submit',e=>{if(e.submitter.id!=='saveCreate')return;e.preventDefault();const name=titleCase(document.getElementById('createName').value);if(!name)return;if(createType==='project'){const key='custom'+Date.now();projectFullNames[key]=name;projectNames[key]=name;selectedProject=key}else{const initials=name.split(' ').map(word=>word[0]).join('').slice(0,2).toUpperCase();engineers.push([name,initials,document.getElementById('createRole').value,document.getElementById('createTeam').value])}document.getElementById('createDialog').close();render()});newCreateForm.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName!=='SELECT'){e.preventDefault();newCreateForm.requestSubmit(newCreateForm.querySelector('.primary'))}});
   </script>
 
-  <!-- Shared state bridge for Firebase -->
+  <!-- Firebase Firestore shared online saving -->
   <script>
     window.teamPlannerBridge = {
       getState() {
         return {
-          version: 2,
+          version: 3,
           projects: { ...projectFullNames },
           projectShortNames: { ...projectNames },
-          engineers: engineers.map(person => [...person]),
-          assignments: assignments.map(item => ({ ...item }))
+          engineers: engineers.map(person => person.map(value => value ?? null)),
+          assignments: assignments.map(item => ({
+            date: item.date ?? "",
+            project: item.project ?? "",
+            engineer: item.engineer ?? "",
+            hours: Number(item.hours ?? 0),
+            status: item.status ?? "Confirmed"
+          }))
         };
       },
       applyState(data) {
         if (!data) return;
 
-        if (data.projects && typeof data.projects === 'object') {
+        if (data.projects && typeof data.projects === "object") {
           Object.keys(projectFullNames).forEach(key => delete projectFullNames[key]);
           Object.assign(projectFullNames, data.projects);
         }
 
-        if (data.projectShortNames && typeof data.projectShortNames === 'object') {
+        if (data.projectShortNames && typeof data.projectShortNames === "object") {
           Object.keys(projectNames).forEach(key => delete projectNames[key]);
           Object.assign(projectNames, data.projectShortNames);
         } else if (data.projects) {
@@ -118,44 +124,60 @@
         }
 
         if (Array.isArray(data.engineers)) {
-          engineers.splice(0, engineers.length, ...data.engineers.map(person => [...person]));
+          engineers.splice(
+            0,
+            engineers.length,
+            ...data.engineers.map(person => [
+              person?.[0] ?? "",
+              person?.[1] ?? "",
+              person?.[2] ?? "",
+              person?.[3] ?? "project"
+            ])
+          );
         }
 
         if (Array.isArray(data.assignments)) {
-          assignments.splice(0, assignments.length, ...data.assignments.map(item => ({ ...item })));
+          assignments.splice(
+            0,
+            assignments.length,
+            ...data.assignments.map(item => ({
+              date: item?.date ?? "",
+              project: item?.project ?? "",
+              engineer: item?.engineer ?? "",
+              hours: Number(item?.hours ?? 0),
+              status: item?.status ?? "Confirmed"
+            }))
+          );
         }
 
         if (!projectFullNames[selectedProject]) {
-          selectedProject = Object.keys(projectFullNames)[0] || '';
+          selectedProject = Object.keys(projectFullNames)[0] || "";
         }
 
         const activePage =
-          document.querySelector('nav button.active')?.dataset.page || 'calendar';
+          document.querySelector("nav button.active")?.dataset.page || "calendar";
 
-        if (activePage === 'calendar') render();
+        if (activePage === "calendar") render();
         else renderSecondary(activePage);
       }
     };
   </script>
 
-  <!-- Firebase Firestore online synchronization -->
   <script type="module">
     import { initializeApp } from
-      "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+      "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
     import {
-      getFirestore,
+      initializeFirestore,
       doc,
       getDoc,
       setDoc,
       onSnapshot,
       serverTimestamp
     } from
-      "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+      "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
     const status = document.createElement("div");
-    status.id = "firebaseSaveStatus";
-
     Object.assign(status.style, {
       position: "fixed",
       right: "18px",
@@ -168,17 +190,13 @@
       font: "600 12px/1.2 system-ui, sans-serif",
       boxShadow: "0 8px 24px rgba(0,0,0,.18)"
     });
-
     status.textContent = "Connecting to Firebase…";
     document.body.appendChild(status);
 
-    function showStatus(message, failed = false) {
+    const showStatus = (message, failed = false) => {
       status.textContent = message;
       status.style.background = failed ? "#b42318" : "#172a58";
-      status.title = failed
-        ? "Open the browser console for the detailed Firebase error."
-        : "";
-    }
+    };
 
     const firebaseConfig = {
       apiKey: "AIzaSyB2BiCD0Va9TxY9KYtCEh8o4oV5PMiayYU",
@@ -189,37 +207,41 @@
       appId: "1:984036405194:web:3ce489ab14e808df726933"
     };
 
+    function cleanForFirestore(value) {
+      return JSON.parse(JSON.stringify(value, (_key, item) =>
+        item === undefined ? null : item
+      ));
+    }
+
     try {
       const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+
+      const db = initializeFirestore(app, {
+        ignoreUndefinedProperties: true
+      });
+
       const plannerRef = doc(db, "planner", "shared");
       const bridge = window.teamPlannerBridge;
 
-      if (!bridge) {
-        throw new Error("Team Planner state bridge was not initialized.");
-      }
-
       let applyingRemote = false;
-      let lastSavedState = "";
-      let saveTimer = null;
+      let lastState = "";
+      let timer;
 
-      function comparableState(state) {
-        return JSON.stringify({
-          version: state.version || 2,
-          projects: state.projects || {},
-          projectShortNames: state.projectShortNames || {},
-          engineers: state.engineers || [],
-          assignments: state.assignments || []
-        });
-      }
+      const comparable = state => JSON.stringify(cleanForFirestore({
+        version: state.version || 3,
+        projects: state.projects || {},
+        projectShortNames: state.projectShortNames || {},
+        engineers: state.engineers || [],
+        assignments: state.assignments || []
+      }));
 
-      async function saveNow() {
+      async function saveState() {
         if (applyingRemote) return;
 
-        const state = bridge.getState();
-        const serialized = comparableState(state);
+        const state = cleanForFirestore(bridge.getState());
+        const serialized = comparable(state);
 
-        if (serialized === lastSavedState) return;
+        if (serialized === lastState) return;
 
         showStatus("Saving online…");
 
@@ -228,20 +250,20 @@
           updatedAt: serverTimestamp()
         });
 
-        lastSavedState = serialized;
+        lastState = serialized;
         showStatus("Saved online");
       }
 
-      const initialSnapshot = await getDoc(plannerRef);
+      const first = await getDoc(plannerRef);
 
-      if (initialSnapshot.exists()) {
+      if (first.exists()) {
         applyingRemote = true;
-        bridge.applyState(initialSnapshot.data());
-        lastSavedState = comparableState(bridge.getState());
+        bridge.applyState(first.data());
+        lastState = comparable(bridge.getState());
         applyingRemote = false;
         showStatus("Loaded online");
       } else {
-        await saveNow();
+        await saveState();
       }
 
       onSnapshot(
@@ -249,45 +271,41 @@
         snapshot => {
           if (!snapshot.exists()) return;
 
-          const incoming = snapshot.data();
-          const incomingState = comparableState(incoming);
+          const incoming = cleanForFirestore(snapshot.data());
+          const serialized = comparable(incoming);
 
-          if (incomingState === lastSavedState) return;
+          if (serialized === lastState) return;
 
           applyingRemote = true;
           bridge.applyState(incoming);
-          lastSavedState = comparableState(bridge.getState());
+          lastState = comparable(bridge.getState());
           applyingRemote = false;
           showStatus("Updated online");
         },
         error => {
-          console.error("Firestore live synchronization error:", error);
-          showStatus(`Sync failed: ${error.code || error.message}`, true);
+          console.error("Firestore synchronization error:", error);
+          showStatus("Sync failed: " + (error.code || error.message), true);
         }
       );
 
-      // The existing planner changes arrays directly, so detect those changes
-      // and save shortly after the user finishes editing.
       setInterval(() => {
         if (applyingRemote) return;
 
-        const current = comparableState(bridge.getState());
-        if (current === lastSavedState) return;
+        const serialized = comparable(bridge.getState());
+        if (serialized === lastState) return;
 
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => {
-          saveNow().catch(error => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          saveState().catch(error => {
             console.error("Firestore save error:", error);
-            showStatus(`Save failed: ${error.code || error.message}`, true);
+            showStatus("Save failed: " + (error.code || error.message), true);
           });
-        }, 350);
-      }, 400);
+        }, 400);
+      }, 500);
 
-      window.addEventListener("online", () => showStatus("Online"));
-      window.addEventListener("offline", () => showStatus("Offline", true));
     } catch (error) {
       console.error("Firebase initialization error:", error);
-      showStatus(`Firebase failed: ${error.code || error.message}`, true);
+      showStatus("Firebase failed: " + (error.code || error.message), true);
     }
   </script>
 
