@@ -1018,6 +1018,23 @@ function renderProjects(){
   }).join("")||`<div class="empty">No projects.</div>`;
 }
 
+$("projectList").addEventListener("click", event => {
+  const editButton = event.target.closest("[data-edit-project]");
+  if (editButton) {
+    event.preventDefault();
+    event.stopPropagation();
+    openProject(editButton.dataset.editProject);
+    return;
+  }
+
+  const deleteButton = event.target.closest("[data-delete-project]");
+  if (deleteButton) {
+    event.preventDefault();
+    event.stopPropagation();
+    deleteProject(deleteButton.dataset.deleteProject);
+  }
+});
+
 function populateProjectCountry(){
   $("projectCountry").innerHTML=countryOptions().map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
   $("projectCountry").value=state.country;
