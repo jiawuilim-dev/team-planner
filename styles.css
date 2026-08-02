@@ -12,3 +12,8 @@
 .country-nav-btn{border:0;background:transparent;color:#c5d0ec;padding:10px 12px;border-radius:9px;text-align:left;font-weight:700;cursor:pointer}
 .country-nav-btn:hover,.country-nav-btn.active{background:#2b4179;color:#fff}
 .active-country-label{display:inline-flex;margin-top:8px;padding:4px 8px;border-radius:20px;background:#e8efff;color:#244cb9;font-size:12px;font-weight:800}
+
+.country-nav-btn{display:flex;align-items:center;justify-content:space-between;width:100%}
+.country-nav-btn small{font-size:10px;color:#8fa3d2;background:#213766;padding:2px 6px;border-radius:10px}
+.country-nav-btn.active small{color:#fff;background:#4964a4}
+.country-empty{padding:8px 12px;color:#9fb0d5;font-size:12px}

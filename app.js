@@ -2,7 +2,7 @@ const firebaseConfig={apiKey:"AIzaSyB2BiCD0Va9TxY9KYtCEh8o4oV5PMiayYU",authDomai
 firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 db.settings({ignoreUndefinedProperties:true});
-const stateRef=db.collection("planner").doc("v2");
+const stateRef=db.collection("planner").doc("v3");
 
 const state={projects:{},employees:{},assignments:{},team:"all",country:"",month:new Date()};
 const defaultProjects={
@@ -16,8 +16,17 @@ const pad=n=>String(n).padStart(2,"0");
 const dateKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const uid=prefix=>prefix+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,7);
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+function normalizeCountry(value){
+  const text=String(value||"").trim();
+  const lower=text.toLowerCase();
+  if(lower.includes("malaysia")) return "Malaysia";
+  if(lower.includes("thailand")) return "Thailand";
+  if(lower.includes("indonesia")) return "Indonesia";
+  if(lower.includes("finland")) return "Finland";
+  return text || "Unassigned";
+}
 const employeeValues=()=>Object.values(state.employees).filter(x=>x&&x.active!==false);
-const projectValues=()=>Object.values(state.projects).filter(x=>x&&x.active!==false&&x.country===state.country);
+const projectValues=()=>Object.values(state.projects).filter(x=>x&&x.active!==false&&normalizeCountry(x.country)===state.country);
 const assignmentValues=()=>Object.values(state.assignments).filter(Boolean);
 let applyingRemote=false,saveTimer=null,lastSerialized="";
 
@@ -27,9 +36,15 @@ function scheduleSave(){if(applyingRemote)return;clearTimeout(saveTimer);setSync
 async function saveState(){const data={version:2,projects:state.projects,employees:state.employees,assignments:state.assignments,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};await stateRef.set(data,{merge:false});lastSerialized=serialize();setSync("Saved online","ok");}
 
 function mergeSeedEmployees(){
-  const existingNames=new Set(employeeValues().map(e=>e.name.toLowerCase()));
-  window.SEED_EMPLOYEES.forEach(emp=>{
-    if(!existingNames.has(emp.name.toLowerCase())) state.employees[emp.id]=emp;
+  const existingNames=new Set(
+    employeeValues()
+      .filter(e=>e&&e.name)
+      .map(e=>String(e.name).toLowerCase())
+  );
+  (window.SEED_EMPLOYEES||[]).forEach(emp=>{
+    if(!emp||!emp.name)return;
+    const clean={...emp,country:normalizeCountry(emp.country)};
+    if(!existingNames.has(clean.name.toLowerCase())) state.employees[clean.id]=clean;
   });
 }
 async function initialise(){
@@ -47,7 +62,12 @@ async function initialise(){
       state.assignments={};
     }
     if(!Object.keys(state.projects).length) state.projects=structuredClone(defaultProjects);
-    Object.values(state.projects).forEach(project=>{if(!project.country)project.country="Malaysia"});
+    Object.values(state.projects).forEach(project=>{
+      project.country=normalizeCountry(project.country||"Malaysia");
+    });
+    Object.values(state.employees).forEach(employee=>{
+      if(employee) employee.country=normalizeCountry(employee.country);
+    });
     mergeSeedEmployees();
     ensureSelectedCountry();
     await saveState();
@@ -70,7 +90,10 @@ async function initialise(){
 }
 
 function countryOptions(){
-  return [...new Set(employeeValues().map(e=>e.country).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  const employeeCountries=employeeValues().map(e=>normalizeCountry(e.country));
+  const projectCountries=Object.values(state.projects).filter(Boolean).map(p=>normalizeCountry(p.country));
+  return [...new Set([...employeeCountries,...projectCountries].filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b));
 }
 function ensureSelectedCountry(){
   const countries=countryOptions();
@@ -78,9 +101,13 @@ function ensureSelectedCountry(){
 }
 function renderCountryNavigation(){
   ensureSelectedCountry();
-  $("sidebarCountryList").innerHTML=countryOptions().map(country=>
-    `<button class="country-nav-btn ${state.country===country?"active":""}" data-country="${esc(country)}">${esc(country)}</button>`
-  ).join("");
+  const countries=countryOptions();
+  $("sidebarCountryList").innerHTML=countries.length
+    ? countries.map(country=>{
+        const count=employeeValues().filter(e=>normalizeCountry(e.country)===country).length;
+        return `<button class="country-nav-btn ${state.country===country?"active":""}" data-country="${esc(country)}"><span>${esc(country)}</span><small>${count}</small></button>`;
+      }).join("")
+    : `<div class="country-empty">No countries found</div>`;
   document.querySelectorAll("[data-country]").forEach(button=>{
     button.onclick=()=>{
       state.country=button.dataset.country;
@@ -93,7 +120,7 @@ function renderCountryNavigation(){
 }
 function filteredEmployees(){
   return employeeValues().filter(e=>
-    e.country===state.country &&
+    normalizeCountry(e.country)===state.country &&
     (state.team==="all"||e.team===state.team)
   );
 }
@@ -221,7 +248,7 @@ $("employeeForm").onsubmit=e=>{
 };
 $("projectForm").onsubmit=e=>{
   e.preventDefault();const id=uid("project");
-  state.projects[id]={id,name:$("projectName").value.trim(),country:$("projectCountry").value,active:true};
+  state.projects[id]={id,name:$("projectName").value.trim(),country:normalizeCountry($("projectCountry").value),active:true};
   $("projectName").value="";$("projectDialog").close();scheduleSave();renderAll();
 };
 
@@ -243,4 +270,13 @@ document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>{
   $("activeCountryLabel").textContent=state.country;
   $("addAssignmentBtn").hidden=v!=="calendar";
 });
+// Render country navigation immediately from the bundled employee list.
+if(!Object.keys(state.employees).length){
+  state.employees=Object.fromEntries((window.SEED_EMPLOYEES||[]).map(e=>[
+    e.id,{...e,country:normalizeCountry(e.country)}
+  ]));
+}
+if(!Object.keys(state.projects).length) state.projects=structuredClone(defaultProjects);
+ensureSelectedCountry();
+renderAll();
 initialise();
