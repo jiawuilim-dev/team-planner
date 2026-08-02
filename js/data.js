@@ -1,17 +1,17 @@
-window.SEED_EMPLOYEES = [
+export const SEED_EMPLOYEES = [
   {
-    "id": "emp_010",
+    "id": "emp_c721c42fac",
     "name": "Muhammad Ariff Bin A'zan",
     "initials": "MA",
     "position": "Project Engineer",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_011",
+    "id": "emp_d9f098a568",
     "name": "Lim Aik Chan",
     "initials": "LA",
     "position": "Project Engineer",
@@ -22,260 +22,260 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_012",
+    "id": "emp_eceac15eec",
     "name": "Nur Nadzirah Syahirah Abdul Mudtalib",
     "initials": "NN",
     "position": "Project Administrative",
     "department": "Service",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "service",
     "active": true
   },
   {
-    "id": "emp_013",
+    "id": "emp_a51bc5c283",
     "name": "Mohamad Arif Haikal Bin Khyar",
     "initials": "MA",
     "position": "Project Supervisor",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_014",
+    "id": "emp_d98ad615cd",
     "name": "Mohammad Amirul Hizam Bin Alias",
     "initials": "MA",
     "position": "Service Technician",
     "department": "Service",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "service",
     "active": true
   },
   {
-    "id": "emp_015",
+    "id": "emp_fa9d1862f5",
     "name": "Mohd Hizani Bin A’zan",
     "initials": "MH",
     "position": "Service Technician",
     "department": "Service",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "service",
     "active": true
   },
   {
-    "id": "emp_016",
+    "id": "emp_a1c5cec5b5",
     "name": "Muhammad Fariesh Afhan Bin Mohd Fadil",
     "initials": "MF",
     "position": "Service Technician",
     "department": "Service",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "service",
     "active": true
   },
   {
-    "id": "emp_017",
+    "id": "emp_00b04ffd08",
     "name": "Muhammad Aiman Daniel Bin Mohd Asri",
     "initials": "MA",
     "position": "Service Technician",
     "department": "Service",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "service",
     "active": true
   },
   {
-    "id": "emp_018",
+    "id": "emp_6efd610d7d",
     "name": "Muhamad Amir Faisal Bin Tajudin",
     "initials": "MA",
     "position": "Service Technician",
     "department": "Service",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "service",
     "active": true
   },
   {
-    "id": "emp_019",
+    "id": "emp_3a1df1c3ee",
     "name": "Muhammad Zulfakhrul Aiman Bin Mohd Roslan",
     "initials": "MZ",
     "position": "Service Technician",
     "department": "Service",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "service",
     "active": true
   },
   {
-    "id": "emp_020",
+    "id": "emp_d7a027344b",
     "name": "Tayalan A/L Chandrasekaran",
     "initials": "TA",
     "position": "Service Technician",
     "department": "Service",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "service",
     "active": true
   },
   {
-    "id": "emp_021",
+    "id": "emp_f5ebd85239",
     "name": "Ong Yee Soon",
     "initials": "OY",
     "position": "Commissioning Technician",
     "department": "Commissioning",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "CP System Integrator Sdn Bhd",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_023",
+    "id": "emp_7bcc11f09d",
     "name": "Mohd Yazid Bin Mohd Shah",
     "initials": "MY",
     "position": "Project Engineer",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "FRB Venture Sdn Bhd",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_024",
+    "id": "emp_71b6f3fbdf",
     "name": "Amir Hafiz Bin Zubir",
     "initials": "AH",
     "position": "Project Engineer",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "FRB Venture Sdn Bhd",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_025",
+    "id": "emp_3dcf5166d1",
     "name": "Asif",
     "initials": "A",
     "position": "General Worker",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "FRB Venture Sdn Bhd",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_026",
+    "id": "emp_c3325aba60",
     "name": "Abdullah",
     "initials": "A",
     "position": "General Worker",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "FRB Venture Sdn Bhd",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_027",
+    "id": "emp_552662fcce",
     "name": "Masum",
     "initials": "M",
     "position": "General Worker",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "FRB Venture Sdn Bhd",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_028",
+    "id": "emp_cf50e11598",
     "name": "Mansor",
     "initials": "M",
     "position": "General Worker",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "FRB Venture Sdn Bhd",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_029",
+    "id": "emp_93afc89010",
     "name": "Sulaiman",
     "initials": "S",
     "position": "General Worker",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "FRB Venture Sdn Bhd",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_031",
+    "id": "emp_4b72dfee6f",
     "name": "Mohamad Akmal Bin Mohd Shah",
     "initials": "MA",
     "position": "Project Supervisor",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "Jay Energy Systems Plt",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_032",
+    "id": "emp_b258984cf1",
     "name": "Muhammad Daniel Bin Zamzaidi",
     "initials": "MD",
     "position": "Project Supervisor",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "Jay Energy Systems Plt",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_033",
+    "id": "emp_d003df978c",
     "name": "Muhammad Khairul Hafiz Bin Md Rejulin",
     "initials": "MK",
     "position": "Project Supervisor",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "Jay Energy Systems Plt",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_034",
+    "id": "emp_6c4207e2bd",
     "name": "Muhamad Saiful Edzwan Bin Mohd Khairol",
     "initials": "MS",
     "position": "Commissioning Technician",
     "department": "Commissioning",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "Jay Energy Systems Plt",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_035",
+    "id": "emp_b1be58580b",
     "name": "Moslam",
     "initials": "M",
     "position": "General Worker",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "Jay Energy Systems Plt",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_036",
+    "id": "emp_50f4793162",
     "name": "Ashfaq",
     "initials": "A",
     "position": "General Worker",
     "department": "Project",
-    "country": "Johor, Malaysia",
+    "country": "Malaysia",
     "company": "Jay Energy Systems Plt",
     "team": "project",
     "active": true
   },
   {
-    "id": "emp_038",
+    "id": "emp_6e926b2f8f",
     "name": "Deriansyah Wengkang",
     "initials": "DW",
     "position": "Project Engineer",
@@ -286,7 +286,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_039",
+    "id": "emp_0a58932b4e",
     "name": "Slamet",
     "initials": "S",
     "position": "Project Supervisor",
@@ -297,7 +297,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_040",
+    "id": "emp_a8c81829c8",
     "name": "Yehezkiel Silaban",
     "initials": "YS",
     "position": "Project Supervisor",
@@ -308,7 +308,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_041",
+    "id": "emp_3b653998b4",
     "name": "Frans Neo Nisa",
     "initials": "FN",
     "position": "General Worker",
@@ -319,7 +319,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_042",
+    "id": "emp_af279c1df6",
     "name": "M Bintang",
     "initials": "MB",
     "position": "General Worker",
@@ -330,7 +330,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_043",
+    "id": "emp_65b61924b9",
     "name": "Dedy S",
     "initials": "DS",
     "position": "Service Engineer",
@@ -341,7 +341,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_044",
+    "id": "emp_df16db4ef5",
     "name": "Bima",
     "initials": "B",
     "position": "Service Administrative",
@@ -352,7 +352,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_045",
+    "id": "emp_5ecebdd633",
     "name": "Service Technician",
     "initials": "ST",
     "position": "Service Technician",
@@ -363,7 +363,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_046",
+    "id": "emp_23ce0c0610",
     "name": "Very",
     "initials": "V",
     "position": "Service Technician",
@@ -374,7 +374,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_047",
+    "id": "emp_bb06530830",
     "name": "Fajar",
     "initials": "F",
     "position": "Service Technician",
@@ -385,7 +385,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_048",
+    "id": "emp_316cd5cc08",
     "name": "Suprihatin",
     "initials": "S",
     "position": "Service Technician",
@@ -396,7 +396,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_049",
+    "id": "emp_33d1d94000",
     "name": "Gosen Manalu",
     "initials": "GM",
     "position": "Service Technician",
@@ -407,7 +407,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_050",
+    "id": "emp_fe25a7f168",
     "name": "Raju",
     "initials": "R",
     "position": "Service Technician",
@@ -418,7 +418,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_052",
+    "id": "emp_26a065f4de",
     "name": "Tapani Kalervo Heininen",
     "initials": "TK",
     "position": "Project Supervisor",
@@ -429,7 +429,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_053",
+    "id": "emp_83f2a8c3e7",
     "name": "Xu Bin",
     "initials": "XB",
     "position": "Project Supervisor",
@@ -440,7 +440,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_054",
+    "id": "emp_09af8f6d9c",
     "name": "Mika Oksanen",
     "initials": "MO",
     "position": "Commissioning Technician",
@@ -451,7 +451,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_056",
+    "id": "emp_2b2f893d79",
     "name": "Surit Apiwan",
     "initials": "SA",
     "position": "Project Engineer",
@@ -462,7 +462,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_057",
+    "id": "emp_cb83cf3d08",
     "name": "Arunee Wichittkul (Pum)",
     "initials": "AW",
     "position": "Project Administrative",
@@ -473,7 +473,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_058",
+    "id": "emp_4623df0282",
     "name": "Teerayut Dantes (Noom)",
     "initials": "TD",
     "position": "General Worker",
@@ -484,7 +484,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_059",
+    "id": "emp_bbd644cf95",
     "name": "Nattachai Singdee (Nat)",
     "initials": "NS",
     "position": "General Worker",
@@ -495,7 +495,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_060",
+    "id": "emp_d42b65238c",
     "name": "Bunyang Phansawang (Yang)",
     "initials": "BP",
     "position": "General Worker",
@@ -506,7 +506,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_061",
+    "id": "emp_2c27c64ceb",
     "name": "Visittisak Saengjun (View)",
     "initials": "VS",
     "position": "General Worker",
@@ -517,7 +517,7 @@ window.SEED_EMPLOYEES = [
     "active": true
   },
   {
-    "id": "emp_062",
+    "id": "emp_33f8328979",
     "name": "Tawep Wannaow (Tawep)",
     "initials": "TW",
     "position": "General Worker",

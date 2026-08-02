@@ -2,210 +2,168 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>FieldFlow Team Planner V2</title>
-  <style>
-:root{--navy:#172a58;--blue:#3567f2;--bg:#f5f7fb;--line:#e3e7ef;--ink:#172033;--muted:#687086;--green:#0e9f6e;--red:#c9364b;--amber:#b56f00}*{box-sizing:border-box}body{margin:0;font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}button,input,select{font:inherit}.app-shell{min-height:100vh;display:grid;grid-template-columns:230px 1fr}.app-shell[hidden]{display:none!important}.sidebar{background:var(--navy);color:#fff;padding:24px 16px;display:flex;flex-direction:column}.brand{font-size:21px;font-weight:800;padding:0 10px 25px}.brand span{color:#9fb9ff}.brand small{font-size:10px;margin-left:7px;color:#b9c8ef}nav{display:grid;gap:6px}.nav-btn{border:0;background:transparent;color:#c5d0ec;padding:11px 12px;border-radius:9px;text-align:left;font-weight:700}.nav-btn:hover,.nav-btn.active{background:#2b4179;color:#fff}.sync-card{margin-top:auto;border-top:1px solid #405585;padding:18px 8px 0;display:flex;gap:10px;align-items:center;color:#d9e1f5}.sync-card small{display:block;color:#9fb0d5}.sync-dot{width:10px;height:10px;border-radius:50%;background:#d8a126}.sync-dot.ok{background:#20bf86}.sync-dot.error{background:#ef5a6f}main{padding:28px;max-width:1500px;width:100%;margin:auto}.topbar,.section-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}h1,h2,p{margin:0}.topbar p,.section-head p{color:var(--muted);margin-top:4px}.actions,.team-toggle,.calendar-toolbar,.toolbar-row{display:flex;align-items:center;gap:8px}.btn,.icon-btn,.team-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 13px;font-weight:700;color:var(--ink);cursor:pointer}.primary{background:var(--blue);border-color:var(--blue);color:#fff}.danger{color:var(--red);border-color:#efbbc3}.team-toggle{border:1px solid var(--line);border-radius:9px;overflow:hidden}.team-btn{border:0;border-radius:0}.team-btn.active{background:#e8efff;color:#244cb9}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}.metrics article,.calendar-card,.table-card,.project-card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 30px rgba(31,45,81,.06)}.metrics article{padding:17px}.metrics span{color:var(--muted);font-size:12px;font-weight:700}.metrics strong{display:block;font-size:27px;margin-top:3px}.calendar-toolbar{padding:17px 18px;border-bottom:1px solid var(--line)}.calendar-toolbar h2{min-width:180px}.icon-btn{font-size:20px;padding:5px 11px}.weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.weekdays{padding:12px 12px 0}.weekdays span{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;padding:0 7px 8px}.calendar-grid{padding:0 12px 14px}.day{min-height:120px;border:1px solid var(--line);margin:-1px 0 0 -1px;padding:7px;background:#fff}.day.muted{background:#fafbfc;color:#a5acba}.day.today .day-num{background:var(--blue);color:#fff}.day-num{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font-weight:700}.event{display:block;width:100%;border:0;border-left:3px solid var(--blue);background:#edf2ff;border-radius:5px;padding:5px 6px;margin-top:5px;text-align:left;font-size:11px;cursor:pointer;overflow:hidden}.event.pending{border-left-color:var(--amber);background:#fff5dc}.event b,.event small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.event small{color:var(--muted)}.toolbar-row{margin-bottom:12px}.toolbar-row input{width:min(430px,100%)}input,select{width:100%;border:1px solid #d7dce7;border-radius:8px;padding:10px;background:#fff}.table-card{overflow:auto}.data-table{width:100%;border-collapse:collapse}.data-table th,.data-table td{padding:12px;border-bottom:1px solid var(--line);text-align:left}.data-table th{font-size:11px;text-transform:uppercase;color:var(--muted);background:#f8f9fc}.person-cell{display:flex;align-items:center;gap:9px;font-weight:700}.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#5d6c91;color:#fff;font-size:10px}.row-actions{display:flex;gap:6px}.small-btn{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 9px;cursor:pointer}.small-btn.delete{color:var(--red)}.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}.project-card{padding:17px}.project-card header{display:flex;justify-content:space-between;gap:8px}.project-card strong{font-size:16px}.project-card p{color:var(--muted);margin-top:7px}dialog{border:0;border-radius:14px;padding:0;width:min(520px,calc(100vw - 30px));box-shadow:0 25px 80px rgba(20,30,55,.3)}dialog::backdrop{background:rgba(15,25,48,.45)}.modal{padding:22px;display:grid;gap:13px}.modal h2{margin-bottom:4px}.modal label{display:grid;gap:6px;font-size:12px;font-weight:700;color:#4d566c}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modal-actions{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;margin-top:6px}.empty{padding:45px;text-align:center;color:var(--muted)}@media(max-width:800px){.app-shell{display:block}.sidebar{display:none}main{padding:18px 10px}.topbar,.section-head{align-items:flex-start;flex-direction:column}.actions{width:100%;flex-wrap:wrap}.metrics{grid-template-columns:1fr}.day{min-height:88px;padding:4px}.event small{display:none}.form-grid{grid-template-columns:1fr}.data-table{min-width:850px}}
-.country-select{min-width:180px;width:auto}.toolbar-row .country-select{min-width:220px}@media(max-width:800px){.country-select{width:100%;min-width:0}}
-
-.country-tabs{display:flex;gap:6px;flex-wrap:wrap}
-.country-tab{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 11px;font-weight:700;cursor:pointer;color:var(--muted)}
-.country-tab.active{background:#e8efff;border-color:#b9cafa;color:#244cb9}
-@media(max-width:800px){.country-tabs{width:100%;overflow:auto;flex-wrap:nowrap;padding-bottom:3px}.country-tab{white-space:nowrap}}
-
-.sidebar-label{padding:0 10px 8px;color:#8fa3d2;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px}
-.country-section{margin-bottom:20px}
-.sidebar-country-list{display:grid;gap:5px}
-.country-nav-btn{border:0;background:transparent;color:#c5d0ec;padding:10px 12px;border-radius:9px;text-align:left;font-weight:700;cursor:pointer}
-.country-nav-btn:hover,.country-nav-btn.active{background:#2b4179;color:#fff}
-.active-country-label{display:inline-flex;margin-top:8px;padding:4px 8px;border-radius:20px;background:#e8efff;color:#244cb9;font-size:12px;font-weight:800}
-
-.country-nav-btn{display:flex;align-items:center;justify-content:space-between;width:100%}
-.country-nav-btn small{font-size:10px;color:#8fa3d2;background:#213766;padding:2px 6px;border-radius:10px}
-.country-nav-btn.active small{color:#fff;background:#4964a4}
-.country-empty{padding:8px 12px;color:#9fb0d5;font-size:12px}
-
-
-.country-workspace-list{display:grid;gap:8px}
-.country-group{border-radius:10px;overflow:hidden}
-.country-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;border:0;background:transparent;color:#d6def2;padding:10px 12px;border-radius:9px;font-weight:800;cursor:pointer}
-.country-toggle:hover,.country-group.open .country-toggle{background:#2b4179;color:#fff}
-.country-toggle small{font-size:10px;color:#8fa3d2;background:#213766;padding:2px 6px;border-radius:10px}
-.country-caret{transition:transform .2s ease}
-.country-group.open .country-caret{transform:rotate(90deg)}
-.country-menu{display:none;padding:5px 0 4px 14px}
-.country-group.open .country-menu{display:grid;gap:4px}
-.country-menu button{border:0;background:transparent;color:#aebde0;text-align:left;padding:8px 10px;border-radius:8px;font-weight:700;cursor:pointer}
-.country-menu button:hover,.country-menu button.active{background:#38538f;color:#fff}
-.view-switch{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-right:6px}
-.view-btn{border:0;background:#fff;color:var(--muted);padding:8px 11px;font-weight:800;cursor:pointer}
-.view-btn.active{background:#e8efff;color:#244cb9}
-.daily-view{padding:16px}
-.daily-summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.daily-pill{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 10px;color:var(--muted)}
-.daily-pill b{color:var(--ink)}
-.daily-list{display:grid;gap:10px}
-.daily-card{border:1px solid var(--line);border-left:4px solid var(--blue);background:#fff;border-radius:10px;padding:13px;display:grid;grid-template-columns:90px 1fr auto;gap:12px;align-items:center}
-.daily-card.pending{border-left-color:var(--amber)}
-.daily-card h3{margin:0;font-size:14px}
-.daily-card p{margin:3px 0 0;color:var(--muted)}
-.daily-empty{padding:55px 20px;text-align:center;color:var(--muted)}
-@media(max-width:800px){.daily-card{grid-template-columns:1fr}.calendar-toolbar{flex-wrap:wrap}}
-
-
-.daily-card .row-actions{justify-content:flex-end;flex-wrap:wrap}
-.daily-card .row-actions .small-btn{min-width:38px}
-.project-card header{align-items:flex-start}
-
-
-.login-screen{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#172a58,#294784)}
-.login-card{width:min(420px,100%);background:#fff;border-radius:16px;padding:28px;box-shadow:0 28px 80px rgba(8,18,45,.3);display:grid;gap:15px}
-.login-brand{font-size:22px;font-weight:900;color:#172a58}.login-brand span{color:#3567f2}.login-brand small{font-size:10px;margin-left:7px;color:#687086}
-.login-card h1{font-size:26px;margin-top:5px}.login-card p{color:var(--muted);margin-top:-8px}
-.login-card label{display:grid;gap:7px;font-size:12px;font-weight:800;color:#4d566c}
-.login-submit{width:100%;margin-top:4px}.login-message{min-height:20px;color:var(--red);font-size:12px;font-weight:700;white-space:pre-wrap}.login-message.info{color:#244cb9}
-.sync-info{display:grid;gap:3px;min-width:0}.sync-info small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.logout-btn{border:0;background:transparent;color:#c6d2ee;padding:4px 0;text-align:left;font-weight:700;cursor:pointer;font-size:12px}
-.logout-btn:hover{color:#fff}
-
-</style>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#172a58">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>FieldFlow Team Planner</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
   <section id="loginScreen" class="login-screen">
     <form id="loginForm" class="login-card">
-      <div class="login-brand">field<span>flow</span><small>V2</small></div>
-      <h1>Team Planner Login</h1>
-      <p>Sign in with your registered company email.</p>
-      <label>Email
-        <input id="loginEmail" type="email" autocomplete="username" required>
-      </label>
-      <label>Password
-        <input id="loginPassword" type="password" autocomplete="current-password" required>
-      </label>
-      <button class="btn primary login-submit" id="loginButton" type="submit">Sign In</button>
-      <div id="loginMessage" class="login-message"></div>
+      <div class="brand large">field<span>flow</span></div>
+      <h1>Team Planner</h1>
+      <p>Sign in with your authorised company account.</p>
+      <label>Email<input id="loginEmail" type="email" autocomplete="username" required></label>
+      <label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label>
+      <button id="loginBtn" class="btn primary" type="submit">Sign in</button>
+      <div id="loginMessage" class="message"></div>
     </form>
   </section>
 
-  <div class="app-shell" id="plannerApp" hidden>
-    <aside class="sidebar">
-      <div class="brand">field<span>flow</span><small>V2</small></div>
-      <div class="sidebar-label">Countries</div>
-      <div id="countryWorkspaceList" class="country-workspace-list"></div>
-      <div class="sync-card">
-        <span id="syncDot" class="sync-dot"></span>
-        <div class="sync-info">
+  <div id="app" class="app" hidden>
+    <header class="mobile-header">
+      <button id="menuBtn" class="icon-button">☰</button>
+      <div><strong>field<span>flow</span></strong><small id="mobileContext">Team Planner</small></div>
+      <button id="quickAddBtn" class="icon-button">＋</button>
+    </header>
+
+    <div id="backdrop" class="backdrop"></div>
+
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">field<span>flow</span><small>PWA</small></div>
+        <button id="closeMenuBtn" class="icon-button light">×</button>
+      </div>
+
+      <div class="side-label">Countries</div>
+      <div id="countryTree" class="country-tree"></div>
+
+      <div class="account-card">
+        <div id="syncDot" class="sync-dot"></div>
+        <div>
           <strong id="syncText">Connecting…</strong>
-          <small id="signedInUser">Signed out</small>
-          <button id="logoutBtn" class="logout-btn" type="button">Log out</button>
+          <small id="userEmail"></small>
+          <button id="logoutBtn">Log out</button>
         </div>
       </div>
     </aside>
 
-    <main>
-      <header class="topbar">
+    <main class="main">
+      <header class="page-header">
         <div>
-          <h1 id="viewTitle">Team Calendar</h1>
-          <p id="viewSub">Shared manpower assignments</p>
-          <div id="activeCountryLabel" class="active-country-label"></div>
+          <h1 id="pageTitle">Team Calendar</h1>
+          <p id="pageSubtitle"></p>
+          <span id="countryBadge" class="badge"></span>
         </div>
-        <div class="actions">
-          <div class="team-toggle">
-            <button class="team-btn active" data-team="all">All</button>
-            <button class="team-btn" data-team="project">Project</button>
-            <button class="team-btn" data-team="service">Service</button>
+        <div class="page-actions">
+          <div class="segmented" id="teamFilter">
+            <button data-team="all" class="active">All</button>
+            <button data-team="project">Project</button>
+            <button data-team="service">Service</button>
           </div>
-          <button class="btn primary" id="addAssignmentBtn">+ Assignment</button>
+          <button id="primaryActionBtn" class="btn primary">+ Assignment</button>
         </div>
       </header>
 
-      <section id="calendarView">
-        <div class="metrics">
-          <article><span>Assignments this month</span><strong id="metricAssignments">0</strong></article>
-          <article><span>Active manpower</span><strong id="metricManpower">0</strong></article>
-          <article><span>Booked hours</span><strong id="metricHours">0h</strong></article>
+      <section id="dashboardView" class="view" hidden>
+        <div class="metrics" id="dashboardMetrics"></div>
+        <div class="panel">
+          <h2>Upcoming assignments</h2>
+          <div id="upcomingList"></div>
         </div>
+      </section>
 
-        <div class="calendar-card">
+      <section id="calendarView" class="view">
+        <div class="metrics" id="calendarMetrics"></div>
+        <div class="panel calendar-panel">
           <div class="calendar-toolbar">
-            <div class="view-switch">
-              <button class="view-btn active" id="monthViewBtn">Month</button>
-              <button class="view-btn" id="dayViewBtn">Day</button>
+            <div class="segmented">
+              <button id="monthModeBtn" class="active">Month</button>
+              <button id="dayModeBtn">Day</button>
             </div>
-            <button class="icon-btn" id="prevMonth">‹</button>
-            <h2 id="monthLabel"></h2>
-            <button class="icon-btn" id="nextMonth">›</button>
-            <button class="btn" id="todayBtn">Today</button>
+            <button id="prevBtn" class="icon-button bordered">‹</button>
+            <h2 id="periodLabel"></h2>
+            <button id="nextBtn" class="icon-button bordered">›</button>
+            <button id="todayBtn" class="btn">Today</button>
           </div>
-          <div class="weekdays">
-            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-          </div>
-          <div id="calendarGrid" class="calendar-grid"></div>
+          <div id="calendarContainer"></div>
         </div>
       </section>
 
-      <section id="manpowerView" hidden>
-        <div class="section-head">
-          <div><h2>Manpower Directory</h2><p>Non-Singapore employees imported from the master list.</p></div>
-          <button class="btn primary" id="addEmployeeBtn">+ Manpower</button>
+      <section id="manpowerView" class="view" hidden>
+        <div class="section-header">
+          <div><h2>Manpower</h2><p>Country employee directory and team allocation.</p></div>
+          <button id="addEmployeeBtn" class="btn primary">+ Manpower</button>
         </div>
-        <div class="toolbar-row">
-          <input id="employeeSearch" placeholder="Search name, position, country…">
+        <div class="filter-row">
+          <input id="employeeSearch" placeholder="Search name, role, department…">
         </div>
-        <div id="employeeList" class="table-card"></div>
+        <div id="employeeTable" class="panel table-panel"></div>
       </section>
 
-      <section id="projectsView" hidden>
-        <div class="section-head">
-          <div><h2>Projects</h2><p>Projects available for manpower assignment.</p></div>
-          <button class="btn primary" id="addProjectBtn">+ Project</button>
+      <section id="projectsView" class="view" hidden>
+        <div class="section-header">
+          <div><h2>Projects</h2><p>Projects available in this country workspace.</p></div>
+          <button id="addProjectBtn" class="btn primary">+ Project</button>
         </div>
-        <div id="projectList" class="project-grid"></div>
+        <div id="projectGrid" class="project-grid"></div>
+      </section>
+
+      <section id="reportsView" class="view" hidden>
+        <div class="metrics" id="reportMetrics"></div>
+        <div class="panel">
+          <h2>Project allocation</h2>
+          <div id="allocationList"></div>
+        </div>
       </section>
     </main>
   </div>
 
   <dialog id="assignmentDialog">
     <form id="assignmentForm" class="modal">
-      <h2 id="assignmentTitle">New Assignment</h2>
-      <input type="hidden" id="assignmentId">
+      <h2 id="assignmentDialogTitle">New Assignment</h2>
+      <input id="assignmentId" type="hidden">
       <label>Project<select id="assignmentProject" required></select></label>
       <label>Manpower<select id="assignmentEmployee" required></select></label>
-      <div class="form-grid">
+      <div class="two-col">
         <label>Start date<input id="assignmentStart" type="date" required></label>
         <label>End date<input id="assignmentEnd" type="date" required></label>
       </div>
-      <div class="form-grid">
-        <label>Hours per day<input id="assignmentHours" type="number" min="1" max="24" value="8" required></label>
+      <div class="two-col">
+        <label>Hours/day<input id="assignmentHours" type="number" min="1" max="24" value="8" required></label>
         <label>Status<select id="assignmentStatus"><option>Confirmed</option><option>Pending</option></select></label>
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn danger" id="deleteAssignmentBtn" hidden>Delete</button>
+        <button id="deleteAssignmentBtn" type="button" class="btn danger" hidden>Delete</button>
         <span></span>
         <button type="button" class="btn" data-close="assignmentDialog">Cancel</button>
-        <button class="btn primary" type="submit">Save</button>
+        <button type="submit" class="btn primary">Save</button>
       </div>
     </form>
   </dialog>
 
   <dialog id="employeeDialog">
     <form id="employeeForm" class="modal">
-      <h2 id="employeeTitle">Add Manpower</h2>
-      <input type="hidden" id="employeeId">
+      <h2 id="employeeDialogTitle">Add Manpower</h2>
+      <input id="employeeId" type="hidden">
       <label>Name<input id="employeeName" required></label>
-      <div class="form-grid">
+      <div class="two-col">
         <label>Position<input id="employeePosition" required></label>
         <label>Team<select id="employeeTeam"><option value="project">Project</option><option value="service">Service</option></select></label>
       </div>
-      <div class="form-grid">
-        <label>Country<input id="employeeCountry"></label>
+      <div class="two-col">
         <label>Department<input id="employeeDepartment"></label>
+        <label>Country<input id="employeeCountry" readonly></label>
       </div>
       <label>Company<input id="employeeCompany"></label>
       <div class="modal-actions">
         <span></span><span></span>
         <button type="button" class="btn" data-close="employeeDialog">Cancel</button>
-        <button class="btn primary" type="submit">Save</button>
+        <button type="submit" class="btn primary">Save</button>
       </div>
     </form>
   </dialog>
@@ -213,13 +171,13 @@
   <dialog id="projectDialog">
     <form id="projectForm" class="modal">
       <h2 id="projectDialogTitle">Add Project</h2>
-      <input type="hidden" id="projectId">
+      <input id="projectId" type="hidden">
       <label>Project name<input id="projectName" required></label>
-      <label>Country<select id="projectCountry" required></select></label>
+      <label>Country<input id="projectCountry" readonly></label>
       <div class="modal-actions">
         <span></span><span></span>
         <button type="button" class="btn" data-close="projectDialog">Cancel</button>
-        <button class="btn primary" type="submit">Add</button>
+        <button type="submit" class="btn primary">Save</button>
       </div>
     </form>
   </dialog>
@@ -227,1112 +185,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-  <script>
-window.SEED_EMPLOYEES = [
-  {
-    "id": "emp_010",
-    "name": "Muhammad Ariff Bin A'zan",
-    "initials": "MA",
-    "position": "Project Engineer",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_011",
-    "name": "Lim Aik Chan",
-    "initials": "LA",
-    "position": "Project Engineer",
-    "department": "Project",
-    "country": "Finland",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_012",
-    "name": "Nur Nadzirah Syahirah Abdul Mudtalib",
-    "initials": "NN",
-    "position": "Project Administrative",
-    "department": "Service",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_013",
-    "name": "Mohamad Arif Haikal Bin Khyar",
-    "initials": "MA",
-    "position": "Project Supervisor",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_014",
-    "name": "Mohammad Amirul Hizam Bin Alias",
-    "initials": "MA",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_015",
-    "name": "Mohd Hizani Bin A’zan",
-    "initials": "MH",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_016",
-    "name": "Muhammad Fariesh Afhan Bin Mohd Fadil",
-    "initials": "MF",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_017",
-    "name": "Muhammad Aiman Daniel Bin Mohd Asri",
-    "initials": "MA",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_018",
-    "name": "Muhamad Amir Faisal Bin Tajudin",
-    "initials": "MA",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_019",
-    "name": "Muhammad Zulfakhrul Aiman Bin Mohd Roslan",
-    "initials": "MZ",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_020",
-    "name": "Tayalan A/L Chandrasekaran",
-    "initials": "TA",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_021",
-    "name": "Ong Yee Soon",
-    "initials": "OY",
-    "position": "Commissioning Technician",
-    "department": "Commissioning",
-    "country": "Johor, Malaysia",
-    "company": "CP System Integrator Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_023",
-    "name": "Mohd Yazid Bin Mohd Shah",
-    "initials": "MY",
-    "position": "Project Engineer",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "FRB Venture Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_024",
-    "name": "Amir Hafiz Bin Zubir",
-    "initials": "AH",
-    "position": "Project Engineer",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "FRB Venture Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_025",
-    "name": "Asif",
-    "initials": "A",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "FRB Venture Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_026",
-    "name": "Abdullah",
-    "initials": "A",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "FRB Venture Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_027",
-    "name": "Masum",
-    "initials": "M",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "FRB Venture Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_028",
-    "name": "Mansor",
-    "initials": "M",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "FRB Venture Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_029",
-    "name": "Sulaiman",
-    "initials": "S",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "FRB Venture Sdn Bhd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_031",
-    "name": "Mohamad Akmal Bin Mohd Shah",
-    "initials": "MA",
-    "position": "Project Supervisor",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "Jay Energy Systems Plt",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_032",
-    "name": "Muhammad Daniel Bin Zamzaidi",
-    "initials": "MD",
-    "position": "Project Supervisor",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "Jay Energy Systems Plt",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_033",
-    "name": "Muhammad Khairul Hafiz Bin Md Rejulin",
-    "initials": "MK",
-    "position": "Project Supervisor",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "Jay Energy Systems Plt",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_034",
-    "name": "Muhamad Saiful Edzwan Bin Mohd Khairol",
-    "initials": "MS",
-    "position": "Commissioning Technician",
-    "department": "Commissioning",
-    "country": "Johor, Malaysia",
-    "company": "Jay Energy Systems Plt",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_035",
-    "name": "Moslam",
-    "initials": "M",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "Jay Energy Systems Plt",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_036",
-    "name": "Ashfaq",
-    "initials": "A",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Johor, Malaysia",
-    "company": "Jay Energy Systems Plt",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_038",
-    "name": "Deriansyah Wengkang",
-    "initials": "DW",
-    "position": "Project Engineer",
-    "department": "Project",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_039",
-    "name": "Slamet",
-    "initials": "S",
-    "position": "Project Supervisor",
-    "department": "Project",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_040",
-    "name": "Yehezkiel Silaban",
-    "initials": "YS",
-    "position": "Project Supervisor",
-    "department": "Project",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_041",
-    "name": "Frans Neo Nisa",
-    "initials": "FN",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_042",
-    "name": "M Bintang",
-    "initials": "MB",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_043",
-    "name": "Dedy S",
-    "initials": "DS",
-    "position": "Service Engineer",
-    "department": "Service",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_044",
-    "name": "Bima",
-    "initials": "B",
-    "position": "Service Administrative",
-    "department": "Service",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_045",
-    "name": "Service Technician",
-    "initials": "ST",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_046",
-    "name": "Very",
-    "initials": "V",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_047",
-    "name": "Fajar",
-    "initials": "F",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_048",
-    "name": "Suprihatin",
-    "initials": "S",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_049",
-    "name": "Gosen Manalu",
-    "initials": "GM",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_050",
-    "name": "Raju",
-    "initials": "R",
-    "position": "Service Technician",
-    "department": "Service",
-    "country": "Indonesia",
-    "company": "PT Marry Maritim Mandiri",
-    "team": "service",
-    "active": true
-  },
-  {
-    "id": "emp_052",
-    "name": "Tapani Kalervo Heininen",
-    "initials": "TK",
-    "position": "Project Supervisor",
-    "department": "Project",
-    "country": "Finland",
-    "company": "Tekniq Oy",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_053",
-    "name": "Xu Bin",
-    "initials": "XB",
-    "position": "Project Supervisor",
-    "department": "Project",
-    "country": "Finland",
-    "company": "Tekniq Oy",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_054",
-    "name": "Mika Oksanen",
-    "initials": "MO",
-    "position": "Commissioning Technician",
-    "department": "Project",
-    "country": "Finland",
-    "company": "Tekniq Oy",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_056",
-    "name": "Surit Apiwan",
-    "initials": "SA",
-    "position": "Project Engineer",
-    "department": "Project",
-    "country": "Thailand",
-    "company": "Power System Automation Co., Ltd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_057",
-    "name": "Arunee Wichittkul (Pum)",
-    "initials": "AW",
-    "position": "Project Administrative",
-    "department": "Project",
-    "country": "Thailand",
-    "company": "Power System Automation Co., Ltd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_058",
-    "name": "Teerayut Dantes (Noom)",
-    "initials": "TD",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Thailand",
-    "company": "Power System Automation Co., Ltd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_059",
-    "name": "Nattachai Singdee (Nat)",
-    "initials": "NS",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Thailand",
-    "company": "Power System Automation Co., Ltd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_060",
-    "name": "Bunyang Phansawang (Yang)",
-    "initials": "BP",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Thailand",
-    "company": "Power System Automation Co., Ltd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_061",
-    "name": "Visittisak Saengjun (View)",
-    "initials": "VS",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Thailand",
-    "company": "Power System Automation Co., Ltd",
-    "team": "project",
-    "active": true
-  },
-  {
-    "id": "emp_062",
-    "name": "Tawep Wannaow (Tawep)",
-    "initials": "TW",
-    "position": "General Worker",
-    "department": "Project",
-    "country": "Thailand",
-    "company": "Power System Automation Co., Ltd",
-    "team": "project",
-    "active": true
-  }
-];
-
-</script>
-  <script>
-const firebaseConfig={apiKey:"AIzaSyB2BiCD0Va9TxY9KYtCEh8o4oV5PMiayYU",authDomain:"team-planner-3b86d.firebaseapp.com",projectId:"team-planner-3b86d",storageBucket:"team-planner-3b86d.firebasestorage.app",messagingSenderId:"984036405194",appId:"1:984036405194:web:3ce489ab14e808df726933"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
-db.settings({ignoreUndefinedProperties:true});
-const stateRef=db.collection("planner").doc("v3");
-
-const state={projects:{},employees:{},assignments:{},team:"all",country:"",activeView:"calendar",calendarMode:"month",month:new Date()};
-const defaultProjects={
-  alpha:{id:"alpha",name:"Alpha Site Expansion",country:"Malaysia",active:true},
-  beta:{id:"beta",name:"Beta Maintenance",country:"Malaysia",active:true},
-  gamma:{id:"gamma",name:"Gamma Commissioning",country:"Thailand",active:true},
-  delta:{id:"delta",name:"Delta Retrofit",country:"Indonesia",active:true}
-};
-const $=id=>document.getElementById(id);
-const pad=n=>String(n).padStart(2,"0");
-const dateKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-const uid=prefix=>prefix+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,7);
-const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-function normalizeCountry(value){
-  const text=String(value||"").trim();
-  const lower=text.toLowerCase();
-  if(lower.includes("malaysia")) return "Malaysia";
-  if(lower.includes("thailand")) return "Thailand";
-  if(lower.includes("indonesia")) return "Indonesia";
-  if(lower.includes("finland")) return "Finland";
-  return text || "Unassigned";
-}
-const employeeValues=()=>Object.values(state.employees).filter(x=>x&&x.active!==false);
-const projectValues=()=>Object.values(state.projects).filter(x=>x&&x.active!==false&&normalizeCountry(x.country)===state.country);
-const assignmentValues=()=>Object.values(state.assignments).filter(Boolean);
-let applyingRemote=false,saveTimer=null,lastSerialized="";
-
-function setSync(text,type=""){ $("syncText").textContent=text;$("syncDot").className="sync-dot "+type; }
-function serialize(){return JSON.stringify({projects:state.projects,employees:state.employees,assignments:state.assignments});}
-function scheduleSave(){if(applyingRemote)return;clearTimeout(saveTimer);setSync("Saving…");saveTimer=setTimeout(saveState,350);}
-async function saveState(){const data={version:2,projects:state.projects,employees:state.employees,assignments:state.assignments,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};await stateRef.set(data,{merge:false});lastSerialized=serialize();setSync("Saved online","ok");}
-
-function mergeSeedEmployees(){
-  const existingNames=new Set(
-    employeeValues()
-      .filter(e=>e&&e.name)
-      .map(e=>String(e.name).toLowerCase())
-  );
-  (window.SEED_EMPLOYEES||[]).forEach(emp=>{
-    if(!emp||!emp.name)return;
-    const clean={...emp,country:normalizeCountry(emp.country)};
-    if(!existingNames.has(clean.name.toLowerCase())) state.employees[clean.id]=clean;
-  });
-}
-async function initialise(){
-  // Open and render the planner first. Firestore must never block the UI.
-  renderAll();
-  setSync("Connecting…");
-
-  try{
-    const snap=await stateRef.get();
-
-    if(snap.exists){
-      const d=snap.data();
-      applyingRemote=true;
-      state.projects=d.projects||state.projects;
-      state.employees=d.employees||state.employees;
-      state.assignments=d.assignments||state.assignments;
-      applyingRemote=false;
-    }
-
-    if(!Object.keys(state.projects).length) state.projects=structuredClone(defaultProjects);
-
-    Object.values(state.projects).forEach(project=>{
-      if(project)project.country=normalizeCountry(project.country||"Malaysia");
-    });
-
-    Object.values(state.employees).forEach(employee=>{
-      if(employee)employee.country=normalizeCountry(employee.country);
-    });
-
-    mergeSeedEmployees();
-    ensureSelectedCountry();
-    renderAll();
-
-    await saveState();
-
-    stateRef.onSnapshot(s=>{
-      if(!s.exists)return;
-      const d=s.data();
-      const incoming=JSON.stringify({
-        projects:d.projects||{},
-        employees:d.employees||{},
-        assignments:d.assignments||{}
-      });
-
-      if(incoming===lastSerialized)return;
-
-      applyingRemote=true;
-      state.projects=d.projects||{};
-      state.employees=d.employees||{};
-      state.assignments=d.assignments||{};
-      lastSerialized=serialize();
-      applyingRemote=false;
-
-      renderAll();
-      setSync("Updated online","ok");
-    },error=>{
-      console.error("Firestore listener error:",error);
-      setSync(error.code||"Sync error","error");
-    });
-  }catch(error){
-    console.error("Firestore initialization error:",error);
-    setSync(`Offline: ${error.code||error.message||"Firestore error"}`,"error");
-    // The planner remains usable with the bundled local data.
-    renderAll();
-  }
-}
-
-function countryOptions(){
-  const employeeCountries=employeeValues().map(e=>normalizeCountry(e.country));
-  const projectCountries=Object.values(state.projects).filter(Boolean).map(p=>normalizeCountry(p.country));
-  return [...new Set([...employeeCountries,...projectCountries].filter(Boolean))]
-    .sort((a,b)=>a.localeCompare(b));
-}
-function ensureSelectedCountry(){
-  const countries=countryOptions();
-  if(!state.country || !countries.includes(state.country)) state.country=countries[0]||"Malaysia";
-}
-function renderCountryNavigation(){
-  ensureSelectedCountry();
-  const countries=countryOptions();
-  $("countryWorkspaceList").innerHTML=countries.length
-    ? countries.map(country=>{
-        const count=employeeValues().filter(e=>normalizeCountry(e.country)===country).length;
-        const open=state.country===country;
-        return `<div class="country-group ${open?"open":""}" data-country-group="${esc(country)}">
-          <button class="country-toggle" data-country-toggle="${esc(country)}">
-            <span>${esc(country)}</span>
-            <span><small>${count}</small> <span class="country-caret">›</span></span>
-          </button>
-          <div class="country-menu">
-            <button class="${open&&state.activeView==="calendar"?"active":""}" data-country="${esc(country)}" data-workspace="calendar">Team Calendar</button>
-            <button class="${open&&state.activeView==="manpower"?"active":""}" data-country="${esc(country)}" data-workspace="manpower">Manpower</button>
-            <button class="${open&&state.activeView==="projects"?"active":""}" data-country="${esc(country)}" data-workspace="projects">Projects</button>
-          </div>
-        </div>`;
-      }).join("")
-    : `<div class="country-empty">No countries found</div>`;
-
-  document.querySelectorAll("[data-country-toggle]").forEach(button=>{
-    button.onclick=()=>{
-      const country=button.dataset.countryToggle;
-      state.country=country;
-      renderCountryNavigation();
-      updateWorkspaceVisibility();
-      renderAll();
-    };
-  });
-
-  document.querySelectorAll("[data-workspace]").forEach(button=>{
-    button.onclick=()=>{
-      state.country=button.dataset.country;
-      state.activeView=button.dataset.workspace;
-      updateWorkspaceVisibility();
-      renderAll();
-    };
-  });
-
-  $("activeCountryLabel").textContent=state.country;
-  updateWorkspaceHeader();
-}
-function filteredEmployees(){
-  return employeeValues().filter(e=>
-    normalizeCountry(e.country)===state.country &&
-    (state.team==="all"||e.team===state.team)
-  );
-}
-function manpowerEmployees(){
-  return filteredEmployees();
-}
-function filteredAssignments(){const allowed=new Set(filteredEmployees().map(e=>e.id));return assignmentValues().filter(a=>allowed.has(a.employeeId));}
-function updateWorkspaceHeader(){
-  $("viewTitle").textContent=state.activeView==="calendar"?"Team Calendar":state.activeView==="manpower"?"Manpower":"Projects";
-  $("viewSub").textContent=state.activeView==="calendar"?`${state.country} manpower assignments`:state.activeView==="manpower"?`${state.country} employee directory`:`${state.country} projects`;
-  $("activeCountryLabel").textContent=state.country;
-  $("addAssignmentBtn").hidden=state.activeView!=="calendar";
-}
-function updateWorkspaceVisibility(){
-  $("calendarView").hidden=state.activeView!=="calendar";
-  $("manpowerView").hidden=state.activeView!=="manpower";
-  $("projectsView").hidden=state.activeView!=="projects";
-  updateWorkspaceHeader();
-}
-function renderAll(){renderCountryNavigation();updateWorkspaceVisibility();renderCalendar();renderEmployees();renderProjects();populateSelects();populateProjectCountry();}
-
-function renderCalendar(){
-  $("monthViewBtn").classList.toggle("active",state.calendarMode==="month");
-  $("dayViewBtn").classList.toggle("active",state.calendarMode==="day");
-
-  if(state.calendarMode==="day"){
-    renderDailyCalendar();
-    return;
-  }
-
-  const y=state.month.getFullYear(),m=state.month.getMonth();
-  $("monthLabel").textContent=state.month.toLocaleString("en",{month:"long",year:"numeric"});
-  const monthAssignments=filteredAssignments().filter(a=>a.date.startsWith(`${y}-${pad(m+1)}`));
-  $("metricAssignments").textContent=monthAssignments.length;
-  $("metricManpower").textContent=filteredEmployees().length;
-  $("metricHours").textContent=monthAssignments.reduce((t,a)=>t+Number(a.hours||0),0)+"h";
-  const first=new Date(y,m,1),start=(first.getDay()+6)%7,total=new Date(y,m+1,0).getDate(),prior=new Date(y,m,0).getDate();
-  let html="";
-  for(let i=0;i<42;i++){
-    let d,muted=false;
-    if(i<start){d=new Date(y,m-1,prior-start+i+1);muted=true}
-    else if(i>=start+total){d=new Date(y,m+1,i-start-total+1);muted=true}
-    else d=new Date(y,m,i-start+1);
-    const key=dateKey(d),today=key===dateKey(new Date());
-    const events=filteredAssignments().filter(a=>a.date===key);
-    const grouped=Object.values(events.reduce((acc,a)=>{
-      const k=a.projectId;
-      if(!acc[k])acc[k]={projectId:k,items:[]};
-      acc[k].items.push(a);
-      return acc;
-    },{}));
-    html+=`<div class="day ${muted?"muted":""} ${today?"today":""}" data-date="${key}">
-      <div class="day-num">${d.getDate()}</div>
-      ${grouped.map(group=>{
-        const p=state.projects[group.projectId];
-        const pending=group.items.some(a=>a.status==="Pending");
-        const totalHours=group.items.reduce((t,a)=>t+Number(a.hours||0),0);
-        const names=group.items.map(a=>state.employees[a.employeeId]?.name||"Unknown");
-        return `<button class="event ${pending?"pending":""}" data-project-group="${group.projectId}" data-date="${key}" title="${esc(names.join(", "))}">
-          <b>${esc(p?.name||"Unknown project")}</b>
-          <small>${group.items.length} manpower · ${totalHours}h</small>
-        </button>`;
-      }).join("")}
-    </div>`;
-  }
-  $("calendarGrid").className="calendar-grid";
-  $("calendarGrid").innerHTML=html;
-  document.querySelectorAll(".event").forEach(b=>b.onclick=()=>{
-    if(b.dataset.projectGroup){
-      state.month=new Date(b.dataset.date+"T00:00");
-      state.calendarMode="day";
-      renderCalendar();
-    }else if(b.dataset.assignment){
-      openAssignment(b.dataset.assignment);
-    }
-  });
-  document.querySelectorAll(".day").forEach(cell=>{
-    cell.ondblclick=()=>openAssignment(null,cell.dataset.date);
-    cell.querySelector(".day-num").onclick=()=>{
-      state.month=new Date(cell.dataset.date+"T00:00");
-      state.calendarMode="day";
-      renderCalendar();
-    };
-  });
-}
-function renderDailyCalendar(){
-  const key=dateKey(state.month);
-  const items=filteredAssignments().filter(a=>a.date===key);
-  const groups=Object.values(items.reduce((acc,a)=>{
-    const k=a.projectId;
-    if(!acc[k])acc[k]={projectId:k,items:[]};
-    acc[k].items.push(a);
-    return acc;
-  },{}));
-  $("monthLabel").textContent=state.month.toLocaleDateString("en",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-  $("metricAssignments").textContent=items.length;
-  $("metricManpower").textContent=new Set(items.map(a=>a.employeeId)).size;
-  $("metricHours").textContent=items.reduce((t,a)=>t+Number(a.hours||0),0)+"h";
-  $("calendarGrid").className="daily-view";
-  $("calendarGrid").innerHTML=groups.length?`
-    <div class="daily-summary">
-      <span class="daily-pill"><b>${items.length}</b> assignments</span>
-      <span class="daily-pill"><b>${new Set(items.map(a=>a.employeeId)).size}</b> manpower</span>
-      <span class="daily-pill"><b>${items.reduce((t,a)=>t+Number(a.hours||0),0)}h</b> booked</span>
-    </div>
-    <div class="daily-list">
-      ${groups.map((group,index)=>{
-        const p=state.projects[group.projectId];
-        const pending=group.items.some(a=>a.status==="Pending");
-        const totalHours=group.items.reduce((t,a)=>t+Number(a.hours||0),0);
-        const people=group.items.map(a=>state.employees[a.employeeId]).filter(Boolean);
-        return `<div class="daily-card ${pending?"pending":""}">
-          <strong>${pad(8+index)}:00</strong>
-          <div>
-            <h3>${esc(p?.name||"Unknown project")}</h3>
-            <p>${group.items.length} manpower · ${totalHours}h</p>
-            <p>${people.map(e=>esc(e.name)).join(", ")}</p>
-          </div>
-          <div class="row-actions">
-            ${group.items.map(a=>`<button class="small-btn" data-assignment="${a.id}">${esc(state.employees[a.employeeId]?.initials||"Edit")}</button>`).join("")}
-          </div>
-        </div>`;
-      }).join("")}
-    </div>`:`<div class="daily-empty">No assignments for this day. Use “+ Assignment” to add one.</div>`;
-  document.querySelectorAll("[data-assignment]").forEach(b=>b.onclick=()=>openAssignment(b.dataset.assignment));
-}
-
-function renderEmployees(){
-  const q=$("employeeSearch").value.trim().toLowerCase();
-  const rows=manpowerEmployees().filter(e=>[e.name,e.position,e.country,e.department,e.company].join(" ").toLowerCase().includes(q));
-  $("employeeList").innerHTML=rows.length?`<table class="data-table"><thead><tr><th>Employee</th><th>Position</th><th>Team</th><th>Country</th><th>Department</th><th>Actions</th></tr></thead><tbody>${rows.map(e=>`<tr><td><span class="person-cell"><span class="avatar">${esc(e.initials)}</span>${esc(e.name)}</span></td><td>${esc(e.position)}</td><td>${esc(e.team)}</td><td>${esc(e.country)}</td><td>${esc(e.department)}</td><td><div class="row-actions"><button class="small-btn" data-edit-employee="${e.id}">Edit</button><button class="small-btn delete" data-delete-employee="${e.id}">Delete</button></div></td></tr>`).join("")}</tbody></table>`:`<div class="empty">No matching manpower.</div>`;
-  document.querySelectorAll("[data-edit-employee]").forEach(b=>b.onclick=()=>openEmployee(b.dataset.editEmployee));
-  document.querySelectorAll("[data-delete-employee]").forEach(b=>b.onclick=()=>deleteEmployee(b.dataset.deleteEmployee));
-}
-
-function renderProjects(){
-  $("projectList").innerHTML=projectValues().map(p=>{
-    const count=assignmentValues().filter(a=>a.projectId===p.id).length;
-    return `<article class="project-card"><header><strong>${esc(p.name)}</strong><div class="row-actions"><button class="small-btn" data-edit-project="${p.id}">Edit</button><button class="small-btn delete" data-delete-project="${p.id}">Delete</button></div></header><p>${esc(p.country)} · ${count} assignment${count===1?"":"s"}</p></article>`;
-  }).join("")||`<div class="empty">No projects.</div>`;
-}
-
-$("projectList").addEventListener("click", event => {
-  const editButton = event.target.closest("[data-edit-project]");
-  if (editButton) {
-    event.preventDefault();
-    event.stopPropagation();
-    openProject(editButton.dataset.editProject);
-    return;
-  }
-
-  const deleteButton = event.target.closest("[data-delete-project]");
-  if (deleteButton) {
-    event.preventDefault();
-    event.stopPropagation();
-    deleteProject(deleteButton.dataset.deleteProject);
-  }
-});
-
-function populateProjectCountry(){
-  $("projectCountry").innerHTML=countryOptions().map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
-  $("projectCountry").value=state.country;
-}
-function populateSelects(){
-  $("assignmentProject").innerHTML=projectValues().map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");
-  $("assignmentEmployee").innerHTML=filteredEmployees().map(e=>`<option value="${e.id}">${esc(e.name)} — ${esc(e.position)}</option>`).join("");
-}
-
-function openAssignment(id=null,date=null){
-  populateSelects();
-  const a=id?state.assignments[id]:null;
-  $("assignmentTitle").textContent=a?"Edit Assignment":"New Assignment";
-  $("assignmentId").value=a?.id||"";
-  $("assignmentProject").value=a?.projectId||projectValues()[0]?.id||"";
-  $("assignmentEmployee").value=a?.employeeId||filteredEmployees()[0]?.id||"";
-  $("assignmentStart").value=a?.date||date||dateKey(new Date());
-  $("assignmentEnd").value=a?.date||date||dateKey(new Date());
-  $("assignmentHours").value=a?.hours||8;
-  $("assignmentStatus").value=a?.status||"Confirmed";
-  $("deleteAssignmentBtn").hidden=!a;
-  $("assignmentDialog").showModal();
-}
-function openEmployee(id=null){
-  const e=id?state.employees[id]:null;
-  $("employeeTitle").textContent=e?"Edit Manpower":"Add Manpower";
-  $("employeeId").value=e?.id||"";
-  $("employeeName").value=e?.name||"";
-  $("employeePosition").value=e?.position||"";
-  $("employeeTeam").value=e?.team||"project";
-  $("employeeCountry").value=e?.country||"";
-  $("employeeDepartment").value=e?.department||"";
-  $("employeeCompany").value=e?.company||"";
-  $("employeeDialog").showModal();
-}
-function deleteEmployee(id){
-  const e=state.employees[id];if(!e)return;
-  const linked=assignmentValues().filter(a=>a.employeeId===id);
-  if(!confirm(`Delete ${e.name}${linked.length?` and ${linked.length} linked assignment(s)`:""}?`))return;
-  linked.forEach(a=>delete state.assignments[a.id]);
-  delete state.employees[id];scheduleSave();renderAll();
-}
-function openProject(id=null){
-  const p=id?state.projects[id]:null;
-  $("projectDialogTitle").textContent=p?"Edit Project":"Add Project";
-  $("projectId").value=p?.id||"";
-  $("projectName").value=p?.name||"";
-  populateProjectCountry();
-  $("projectCountry").value=p?.country||state.country;
-  $("projectDialog").showModal();
-}
-function deleteProject(id){
-  const p=state.projects[id];if(!p)return;
-  const linked=assignmentValues().filter(a=>a.projectId===id);
-  if(!confirm(`Delete ${p.name}${linked.length?` and ${linked.length} linked assignment(s)`:""}?`))return;
-  linked.forEach(a=>delete state.assignments[a.id]);
-  delete state.projects[id];scheduleSave();renderAll();
-}
-
-$("assignmentForm").onsubmit=e=>{
-  e.preventDefault();
-  const start=$("assignmentStart").value,end=$("assignmentEnd").value;
-  if(end<start){alert("End date must be on or after start date.");return}
-  const existing=$("assignmentId").value;
-  if(existing) delete state.assignments[existing];
-  let d=new Date(start+"T00:00"),last=new Date(end+"T00:00");
-  while(d<=last){
-    const id=existing&&start===end?existing:uid("asg");
-    state.assignments[id]={id,projectId:$("assignmentProject").value,employeeId:$("assignmentEmployee").value,date:dateKey(d),hours:Number($("assignmentHours").value),status:$("assignmentStatus").value};
-    d.setDate(d.getDate()+1);
-  }
-  $("assignmentDialog").close();scheduleSave();renderAll();
-};
-$("deleteAssignmentBtn").onclick=()=>{
-  const id=$("assignmentId").value;if(!id)return;
-  if(confirm("Delete this assignment?")){delete state.assignments[id];$("assignmentDialog").close();scheduleSave();renderAll()}
-};
-$("employeeForm").onsubmit=e=>{
-  e.preventDefault();
-  const id=$("employeeId").value||uid("emp"),name=$("employeeName").value.trim();
-  const initials=name.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();
-  state.employees[id]={id,name,initials,position:$("employeePosition").value.trim(),team:$("employeeTeam").value,country:$("employeeCountry").value.trim(),department:$("employeeDepartment").value.trim(),company:$("employeeCompany").value.trim(),active:true};
-  $("employeeDialog").close();scheduleSave();renderAll();
-};
-$("projectForm").onsubmit=e=>{
-  e.preventDefault();
-  const id=$("projectId").value||uid("project");
-  state.projects[id]={id,name:$("projectName").value.trim(),country:normalizeCountry($("projectCountry").value),active:true};
-  $("projectName").value="";
-  $("projectId").value="";
-  $("projectDialog").close();
-  scheduleSave();
-  renderAll();
-};
-
-document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).close());
-$("addAssignmentBtn").onclick=()=>openAssignment();
-$("addEmployeeBtn").onclick=()=>openEmployee();
-$("addProjectBtn").onclick=()=>openProject();
-$("employeeSearch").oninput=renderEmployees;
-$("prevMonth").onclick=()=>{state.calendarMode==="day"?state.month.setDate(state.month.getDate()-1):state.month.setMonth(state.month.getMonth()-1);renderCalendar()};
-$("nextMonth").onclick=()=>{state.calendarMode==="day"?state.month.setDate(state.month.getDate()+1):state.month.setMonth(state.month.getMonth()+1);renderCalendar()};
-$("todayBtn").onclick=()=>{state.month=new Date();renderCalendar()};
-$("monthViewBtn").onclick=()=>{state.calendarMode="month";renderCalendar()};
-$("dayViewBtn").onclick=()=>{state.calendarMode="day";renderCalendar()};
-document.querySelectorAll(".team-btn").forEach(b=>b.onclick=()=>{state.team=b.dataset.team;document.querySelectorAll(".team-btn").forEach(x=>x.classList.toggle("active",x===b));renderAll()});
-
-let plannerInitialised=false;
-
-function prepareLocalState(){
-  if(!Object.keys(state.employees).length){
-    state.employees=Object.fromEntries((window.SEED_EMPLOYEES||[]).map(e=>[
-      e.id,{...e,country:normalizeCountry(e.country)}
-    ]));
-  }
-  if(!Object.keys(state.projects).length) state.projects=structuredClone(defaultProjects);
-  ensureSelectedCountry();
-  updateWorkspaceVisibility();
-  renderAll();
-}
-
-function friendlyAuthError(error){
-  const code=error?.code||"";
-  const messages={
-    "auth/invalid-credential":"Incorrect email or password.",
-    "auth/user-not-found":"Incorrect email or password.",
-    "auth/wrong-password":"Incorrect email or password.",
-    "auth/invalid-email":"Enter a valid email address.",
-    "auth/too-many-requests":"Too many attempts. Please try again later.",
-    "auth/user-disabled":"This account has been disabled."
-  };
-  return messages[code]||error?.message||"Unable to sign in.";
-}
-
-let auth=null;
-
-function setLoginMessage(message,type="error"){
-  const box=$("loginMessage");
-  box.textContent=message;
-  box.classList.toggle("info",type==="info");
-}
-
-async function openPlanner(user){
-  $("loginScreen").hidden=true;
-  $("loginScreen").style.display="none";
-  $("plannerApp").hidden=false;
-  $("plannerApp").style.display="grid";
-  $("signedInUser").textContent=user?.email||"Signed in";
-  setLoginMessage("");
-
-  try{
-    prepareLocalState();
-    renderAll();
-  }catch(error){
-    console.error("Local planner render error:",error);
-    setSync(`Render error: ${error.message||error}`,"error");
-  }
-
-  if(!plannerInitialised){
-    plannerInitialised=true;
-    initialise().catch(error=>{
-      console.error("Planner initialization error:",error);
-      setSync(`Initialization error: ${error.message||error}`,"error");
-    });
-  }
-}
-
-async function performLogin(event){
-  if(event)event.preventDefault();
-
-  const button=$("loginButton");
-  const email=$("loginEmail").value.trim();
-  const password=$("loginPassword").value;
-
-  if(!email||!password){
-    setLoginMessage("Enter both email and password.");
-    return;
-  }
-
-  if(!window.firebase){
-    setLoginMessage("Firebase SDK did not load. Refresh the page and check your internet connection.");
-    return;
-  }
-
-  if(typeof firebase.auth!=="function"){
-    setLoginMessage("Firebase Authentication SDK did not load. Hard-refresh the page using Command + Shift + R.");
-    return;
-  }
-
-  try{
-    if(!auth)auth=firebase.auth();
-    button.disabled=true;
-    button.textContent="Signing In…";
-    setLoginMessage("Contacting Firebase…","info");
-
-    const credential=await auth.signInWithEmailAndPassword(email,password);
-    setLoginMessage("Sign-in successful. Opening planner…","info");
-    await openPlanner(credential.user);
-  }catch(error){
-    console.error("Login failed:",error);
-    const detail=[friendlyAuthError(error),error?.code?`Code: ${error.code}`:""].filter(Boolean).join("\n");
-    setLoginMessage(detail);
-  }finally{
-    button.disabled=false;
-    button.textContent="Sign In";
-  }
-}
-
-$("loginForm").addEventListener("submit",performLogin);
-$("loginButton").addEventListener("click",performLogin);
-
-$("logoutBtn").onclick=async()=>{
-  try{
-    if(!auth&&typeof firebase.auth==="function")auth=firebase.auth();
-    await auth.signOut();
-  }catch(error){
-    console.error("Logout failed:",error);
-  }
-};
-
-if(!window.firebase){
-  setLoginMessage("Firebase core SDK failed to load.");
-}else if(typeof firebase.auth!=="function"){
-  setLoginMessage("Firebase Authentication SDK failed to load. Use Command + Shift + R to refresh.");
-}else{
-  auth=firebase.auth();
-  setLoginMessage("Authentication ready.","info");
-}
-
-if(auth)auth.onAuthStateChanged(async user=>{
-  if(user){
-    await openPlanner(user);
-  }else{
-    $("plannerApp").hidden=true;
-    $("plannerApp").style.display="none";
-    $("loginScreen").hidden=false;
-    $("loginScreen").style.display="grid";
-    $("signedInUser").textContent="Signed out";
-    $("loginPassword").value="";
-    setLoginMessage("Authentication ready.","info");
-    $("loginEmail").focus();
-  }
-});
-</script>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
