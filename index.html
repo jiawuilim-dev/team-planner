@@ -28,6 +28,7 @@
           <p id="viewSub">Shared manpower assignments</p>
         </div>
         <div class="actions">
+          <div id="calendarCountryTabs" class="country-tabs" aria-label="Calendar countries"></div>
           <div class="team-toggle">
             <button class="team-btn active" data-team="all">All</button>
             <button class="team-btn" data-team="project">Project</button>
@@ -64,6 +65,7 @@
           <button class="btn primary" id="addEmployeeBtn">+ Manpower</button>
         </div>
         <div class="toolbar-row">
+          <select id="manpowerCountry" class="country-select" aria-label="Filter manpower by country"></select>
           <input id="employeeSearch" placeholder="Search name, position, country…">
         </div>
         <div id="employeeList" class="table-card"></div>

@@ -4,7 +4,7 @@ const db=firebase.firestore();
 db.settings({ignoreUndefinedProperties:true});
 const stateRef=db.collection("planner").doc("v2");
 
-const state={projects:{},employees:{},assignments:{},team:"all",month:new Date()};
+const state={projects:{},employees:{},assignments:{},team:"all",calendarCountry:"all",manpowerCountry:"all",month:new Date()};
 const defaultProjects={
   alpha:{id:"alpha",name:"Alpha Site Expansion",active:true},
   beta:{id:"beta",name:"Beta Maintenance",active:true},
@@ -67,9 +67,44 @@ async function initialise(){
   }catch(e){console.error(e);setSync(`${e.code||""} ${e.message||e}`,"error");}
 }
 
-function filteredEmployees(){return employeeValues().filter(e=>state.team==="all"||e.team===state.team);}
+function countryOptions(){
+  return [...new Set(employeeValues().map(e=>e.country).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+}
+function populateCountryFilters(){
+  const countries=countryOptions();
+  $("calendarCountryTabs").innerHTML=[
+    `<button class="country-tab ${state.calendarCountry==="all"?"active":""}" data-calendar-country="all">All Countries</button>`,
+    ...countries.map(c=>`<button class="country-tab ${state.calendarCountry===c?"active":""}" data-calendar-country="${esc(c)}">${esc(c)}</button>`)
+  ].join("");
+  document.querySelectorAll("[data-calendar-country]").forEach(button=>{
+    button.onclick=()=>{
+      state.calendarCountry=button.dataset.calendarCountry;
+      populateCountryFilters();
+      renderCalendar();
+      populateSelects();
+    };
+  });
+
+  const options=['<option value="all">All Countries</option>']
+    .concat(countries.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`))
+    .join("");
+  $("manpowerCountry").innerHTML=options;
+  $("manpowerCountry").value=state.manpowerCountry;
+}
+function filteredEmployees(){
+  return employeeValues().filter(e=>
+    (state.team==="all"||e.team===state.team) &&
+    (state.calendarCountry==="all"||e.country===state.calendarCountry)
+  );
+}
+function manpowerEmployees(){
+  return employeeValues().filter(e=>
+    (state.team==="all"||e.team===state.team) &&
+    (state.manpowerCountry==="all"||e.country===state.manpowerCountry)
+  );
+}
 function filteredAssignments(){const allowed=new Set(filteredEmployees().map(e=>e.id));return assignmentValues().filter(a=>allowed.has(a.employeeId));}
-function renderAll(){renderCalendar();renderEmployees();renderProjects();populateSelects();}
+function renderAll(){populateCountryFilters();renderCalendar();renderEmployees();renderProjects();populateSelects();}
 
 function renderCalendar(){
   const y=state.month.getFullYear(),m=state.month.getMonth();
@@ -99,7 +134,7 @@ function renderCalendar(){
 
 function renderEmployees(){
   const q=$("employeeSearch").value.trim().toLowerCase();
-  const rows=filteredEmployees().filter(e=>[e.name,e.position,e.country,e.department,e.company].join(" ").toLowerCase().includes(q));
+  const rows=manpowerEmployees().filter(e=>[e.name,e.position,e.country,e.department,e.company].join(" ").toLowerCase().includes(q));
   $("employeeList").innerHTML=rows.length?`<table class="data-table"><thead><tr><th>Employee</th><th>Position</th><th>Team</th><th>Country</th><th>Department</th><th>Actions</th></tr></thead><tbody>${rows.map(e=>`<tr><td><span class="person-cell"><span class="avatar">${esc(e.initials)}</span>${esc(e.name)}</span></td><td>${esc(e.position)}</td><td>${esc(e.team)}</td><td>${esc(e.country)}</td><td>${esc(e.department)}</td><td><div class="row-actions"><button class="small-btn" data-edit-employee="${e.id}">Edit</button><button class="small-btn delete" data-delete-employee="${e.id}">Delete</button></div></td></tr>`).join("")}</tbody></table>`:`<div class="empty">No matching manpower.</div>`;
   document.querySelectorAll("[data-edit-employee]").forEach(b=>b.onclick=()=>openEmployee(b.dataset.editEmployee));
   document.querySelectorAll("[data-delete-employee]").forEach(b=>b.onclick=()=>deleteEmployee(b.dataset.deleteEmployee));
@@ -108,9 +143,8 @@ function renderEmployees(){
 function renderProjects(){
   $("projectList").innerHTML=projectValues().map(p=>{
     const count=assignmentValues().filter(a=>a.projectId===p.id).length;
-    return `<article class="project-card"><header><strong>${esc(p.name)}</strong><button class="small-btn delete" data-delete-project="${p.id}">Delete</button></header><p>${count} assignment${count===1?"":"s"}</p></article>`;
+    return `<article class="project-card"><header><strong>${esc(p.name)}</strong></header><p>${count} assignment${count===1?"":"s"}</p></article>`;
   }).join("")||`<div class="empty">No projects.</div>`;
-  document.querySelectorAll("[data-delete-project]").forEach(b=>b.onclick=()=>deleteProject(b.dataset.deleteProject));
 }
 
 function populateSelects(){
@@ -198,7 +232,9 @@ $("employeeSearch").oninput=renderEmployees;
 $("prevMonth").onclick=()=>{state.month.setMonth(state.month.getMonth()-1);renderCalendar()};
 $("nextMonth").onclick=()=>{state.month.setMonth(state.month.getMonth()+1);renderCalendar()};
 $("todayBtn").onclick=()=>{state.month=new Date();renderCalendar()};
-document.querySelectorAll(".team-btn").forEach(b=>b.onclick=()=>{state.team=b.dataset.team;document.querySelectorAll(".team-btn").forEach(x=>x.classList.toggle("active",x===b));renderAll()});
+$("manpowerCountry").onchange=()=>{state.manpowerCountry=$("manpowerCountry").value;renderEmployees()};
+document.querySelectorAll(".team-btn").forEach(b=>b.onclick=()=>{state.team=b.dataset.team;$("manpowerCountry").onchange=()=>{state.manpowerCountry=$("manpowerCountry").value;renderEmployees()};
+document.querySelectorAll(".team-btn").forEach(x=>x.classList.toggle("active",x===b));renderAll()});
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("active",x===b));
   const v=b.dataset.view;
