@@ -48,7 +48,7 @@
     let activeDate=new Date(2026,7,2);
     let viewMode='month';
     let dailyProjectFilter='all', dailyEngineerFilter='all', dailySort='time';
-    const engineers=[['Amir Rahman','AR','Project Engineer','project'],['Chloe Tan','CT','Commissioning Engineer','project'],['Daniel Wong','DW','Commissioning Technician','service'],['Priya Nair','PN','General Worker','service']];
+    const engineers=[["Muhammad Ariff Bin A'zan", "MA", "Project Engineer", "project"], ["Lim Aik Chan", "LA", "Project Engineer", "project"], ["Nur Nadzirah Syahirah Abdul Mudtalib", "NN", "Project Administrative", "service"], ["Mohamad Arif Haikal Bin Khyar", "MA", "Project Supervisor", "project"], ["Mohammad Amirul Hizam Bin Alias", "MA", "Service Technician", "service"], ["Mohd Hizani Bin A’zan", "MH", "Service Technician", "service"], ["Muhammad Fariesh Afhan Bin Mohd Fadil", "MF", "Service Technician", "service"], ["Muhammad Aiman Daniel Bin Mohd Asri", "MA", "Service Technician", "service"], ["Muhamad Amir Faisal Bin Tajudin", "MA", "Service Technician", "service"], ["Muhammad Zulfakhrul Aiman Bin Mohd Roslan", "MZ", "Service Technician", "service"], ["Tayalan A/L Chandrasekaran", "TA", "Service Technician", "service"], ["Ong Yee Soon", "OY", "Commissioning Technician", "project"], ["Mohd Yazid Bin Mohd Shah", "MY", "Project Engineer", "project"], ["Amir Hafiz Bin Zubir", "AH", "Project Engineer", "project"], ["Asif", "A", "General Worker", "project"], ["Abdullah", "A", "General Worker", "project"], ["Masum", "M", "General Worker", "project"], ["Mansor", "M", "General Worker", "project"], ["Sulaiman", "S", "General Worker", "project"], ["Mohamad Akmal Bin Mohd Shah", "MA", "Project Supervisor", "project"], ["Muhammad Daniel Bin Zamzaidi", "MD", "Project Supervisor", "project"], ["Muhammad Khairul Hafiz Bin Md Rejulin", "MK", "Project Supervisor", "project"], ["Muhamad Saiful Edzwan Bin Mohd Khairol", "MS", "Commissioning Technician", "project"], ["Moslam", "M", "General Worker", "project"], ["Ashfaq", "A", "General Worker", "project"], ["Deriansyah Wengkang", "DW", "Project Engineer", "project"], ["Slamet", "S", "Project Supervisor", "project"], ["Yehezkiel Silaban", "YS", "Project Supervisor", "project"], ["Frans Neo Nisa", "FN", "General Worker", "project"], ["M Bintang", "MB", "General Worker", "project"], ["Dedy S", "DS", "Service Engineer", "service"], ["Bima", "B", "Service Administrative", "service"], ["Service Technician", "ST", "Service Technician", "service"], ["Very", "V", "Service Technician", "service"], ["Fajar", "F", "Service Technician", "service"], ["Suprihatin", "S", "Service Technician", "service"], ["Gosen Manalu", "GM", "Service Technician", "service"], ["Raju", "R", "Service Technician", "service"], ["Tapani Kalervo Heininen", "TK", "Project Supervisor", "project"], ["Xu Bin", "XB", "Project Supervisor", "project"], ["Mika Oksanen", "MO", "Commissioning Technician", "project"], ["Surit Apiwan", "SA", "Project Engineer", "project"], ["Arunee Wichittkul (Pum)", "AW", "Project Administrative", "project"], ["Teerayut Dantes (Noom)", "TD", "General Worker", "project"], ["Nattachai Singdee (Nat)", "NS", "General Worker", "project"], ["Bunyang Phansawang (Yang)", "BP", "General Worker", "project"], ["Visittisak Saengjun (View)", "VS", "General Worker", "project"], ["Tawep Wannaow (Tawep)", "TW", "General Worker", "project"]];
     const assignments=[
       {date:'2026-08-02',project:'alpha',engineer:'Amir Rahman',hours:8},{date:'2026-08-02',project:'gamma',engineer:'Priya Nair',hours:6,status:'Pending'},{date:'2026-08-03',project:'alpha',engineer:'Amir Rahman',hours:8},{date:'2026-08-04',project:'alpha',engineer:'Chloe Tan',hours:8},{date:'2026-08-05',project:'beta',engineer:'Daniel Wong',hours:8},{date:'2026-08-06',project:'gamma',engineer:'Priya Nair',hours:8,status:'Pending'},{date:'2026-08-07',project:'beta',engineer:'Amir Rahman',hours:6},{date:'2026-08-10',project:'delta',engineer:'Chloe Tan',hours:8},{date:'2026-08-11',project:'alpha',engineer:'Daniel Wong',hours:8},{date:'2026-08-12',project:'gamma',engineer:'Priya Nair',hours:8},{date:'2026-08-13',project:'beta',engineer:'Amir Rahman',hours:8},{date:'2026-08-14',project:'delta',engineer:'Chloe Tan',hours:8},{date:'2026-08-17',project:'alpha',engineer:'Daniel Wong',hours:8},{date:'2026-08-18',project:'gamma',engineer:'Priya Nair',hours:8},{date:'2026-08-19',project:'beta',engineer:'Amir Rahman',hours:8},{date:'2026-08-20',project:'alpha',engineer:'Chloe Tan',hours:8,status:'Pending'},{date:'2026-08-24',project:'delta',engineer:'Daniel Wong',hours:8},{date:'2026-08-25',project:'beta',engineer:'Priya Nair',hours:8},{date:'2026-08-26',project:'alpha',engineer:'Amir Rahman',hours:8},{date:'2026-08-27',project:'gamma',engineer:'Chloe Tan',hours:8}
     ];
@@ -130,6 +130,29 @@
       if (!map || typeof map !== "object") return [];
       return Object.keys(map).sort().map(function (key) {
         return map[key];
+      });
+    }
+
+    const masterEmployeeSeed = [{"name": "Muhammad Ariff Bin A'zan", "initials": "MA", "title": "Project Engineer", "team": "project"}, {"name": "Lim Aik Chan", "initials": "LA", "title": "Project Engineer", "team": "project"}, {"name": "Nur Nadzirah Syahirah Abdul Mudtalib", "initials": "NN", "title": "Project Administrative", "team": "service"}, {"name": "Mohamad Arif Haikal Bin Khyar", "initials": "MA", "title": "Project Supervisor", "team": "project"}, {"name": "Mohammad Amirul Hizam Bin Alias", "initials": "MA", "title": "Service Technician", "team": "service"}, {"name": "Mohd Hizani Bin A’zan", "initials": "MH", "title": "Service Technician", "team": "service"}, {"name": "Muhammad Fariesh Afhan Bin Mohd Fadil", "initials": "MF", "title": "Service Technician", "team": "service"}, {"name": "Muhammad Aiman Daniel Bin Mohd Asri", "initials": "MA", "title": "Service Technician", "team": "service"}, {"name": "Muhamad Amir Faisal Bin Tajudin", "initials": "MA", "title": "Service Technician", "team": "service"}, {"name": "Muhammad Zulfakhrul Aiman Bin Mohd Roslan", "initials": "MZ", "title": "Service Technician", "team": "service"}, {"name": "Tayalan A/L Chandrasekaran", "initials": "TA", "title": "Service Technician", "team": "service"}, {"name": "Ong Yee Soon", "initials": "OY", "title": "Commissioning Technician", "team": "project"}, {"name": "Mohd Yazid Bin Mohd Shah", "initials": "MY", "title": "Project Engineer", "team": "project"}, {"name": "Amir Hafiz Bin Zubir", "initials": "AH", "title": "Project Engineer", "team": "project"}, {"name": "Asif", "initials": "A", "title": "General Worker", "team": "project"}, {"name": "Abdullah", "initials": "A", "title": "General Worker", "team": "project"}, {"name": "Masum", "initials": "M", "title": "General Worker", "team": "project"}, {"name": "Mansor", "initials": "M", "title": "General Worker", "team": "project"}, {"name": "Sulaiman", "initials": "S", "title": "General Worker", "team": "project"}, {"name": "Mohamad Akmal Bin Mohd Shah", "initials": "MA", "title": "Project Supervisor", "team": "project"}, {"name": "Muhammad Daniel Bin Zamzaidi", "initials": "MD", "title": "Project Supervisor", "team": "project"}, {"name": "Muhammad Khairul Hafiz Bin Md Rejulin", "initials": "MK", "title": "Project Supervisor", "team": "project"}, {"name": "Muhamad Saiful Edzwan Bin Mohd Khairol", "initials": "MS", "title": "Commissioning Technician", "team": "project"}, {"name": "Moslam", "initials": "M", "title": "General Worker", "team": "project"}, {"name": "Ashfaq", "initials": "A", "title": "General Worker", "team": "project"}, {"name": "Deriansyah Wengkang", "initials": "DW", "title": "Project Engineer", "team": "project"}, {"name": "Slamet", "initials": "S", "title": "Project Supervisor", "team": "project"}, {"name": "Yehezkiel Silaban", "initials": "YS", "title": "Project Supervisor", "team": "project"}, {"name": "Frans Neo Nisa", "initials": "FN", "title": "General Worker", "team": "project"}, {"name": "M Bintang", "initials": "MB", "title": "General Worker", "team": "project"}, {"name": "Dedy S", "initials": "DS", "title": "Service Engineer", "team": "service"}, {"name": "Bima", "initials": "B", "title": "Service Administrative", "team": "service"}, {"name": "Service Technician", "initials": "ST", "title": "Service Technician", "team": "service"}, {"name": "Very", "initials": "V", "title": "Service Technician", "team": "service"}, {"name": "Fajar", "initials": "F", "title": "Service Technician", "team": "service"}, {"name": "Suprihatin", "initials": "S", "title": "Service Technician", "team": "service"}, {"name": "Gosen Manalu", "initials": "GM", "title": "Service Technician", "team": "service"}, {"name": "Raju", "initials": "R", "title": "Service Technician", "team": "service"}, {"name": "Tapani Kalervo Heininen", "initials": "TK", "title": "Project Supervisor", "team": "project"}, {"name": "Xu Bin", "initials": "XB", "title": "Project Supervisor", "team": "project"}, {"name": "Mika Oksanen", "initials": "MO", "title": "Commissioning Technician", "team": "project"}, {"name": "Surit Apiwan", "initials": "SA", "title": "Project Engineer", "team": "project"}, {"name": "Arunee Wichittkul (Pum)", "initials": "AW", "title": "Project Administrative", "team": "project"}, {"name": "Teerayut Dantes (Noom)", "initials": "TD", "title": "General Worker", "team": "project"}, {"name": "Nattachai Singdee (Nat)", "initials": "NS", "title": "General Worker", "team": "project"}, {"name": "Bunyang Phansawang (Yang)", "initials": "BP", "title": "General Worker", "team": "project"}, {"name": "Visittisak Saengjun (View)", "initials": "VS", "title": "General Worker", "team": "project"}, {"name": "Tawep Wannaow (Tawep)", "initials": "TW", "title": "General Worker", "team": "project"}];
+
+    function mergeMasterEmployees() {
+      const existingNames = new Set(
+        engineers.map(function (person) {
+          return String(person[0] || "").trim().toLowerCase();
+        })
+      );
+
+      masterEmployeeSeed.forEach(function (person) {
+        const key = person.name.trim().toLowerCase();
+        if (!existingNames.has(key)) {
+          engineers.push([
+            person.name,
+            person.initials,
+            person.title,
+            person.team
+          ]);
+          existingNames.add(key);
+        }
       });
     }
 
@@ -241,6 +264,8 @@
         );
       }
 
+      mergeMasterEmployees();
+
       if (!projectFullNames[selectedProject]) {
         selectedProject = Object.keys(projectFullNames)[0] || "";
       }
@@ -251,6 +276,8 @@
       if (activePage === "calendar") render();
       else renderSecondary(activePage);
     }
+
+    mergeMasterEmployees();
 
     try {
       show("Firebase: initializing app…");
