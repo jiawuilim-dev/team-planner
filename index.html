@@ -63,7 +63,7 @@
 .login-brand{font-size:22px;font-weight:900;color:#172a58}.login-brand span{color:#3567f2}.login-brand small{font-size:10px;margin-left:7px;color:#687086}
 .login-card h1{font-size:26px;margin-top:5px}.login-card p{color:var(--muted);margin-top:-8px}
 .login-card label{display:grid;gap:7px;font-size:12px;font-weight:800;color:#4d566c}
-.login-submit{width:100%;margin-top:4px}.login-message{min-height:20px;color:var(--red);font-size:12px;font-weight:700}
+.login-submit{width:100%;margin-top:4px}.login-message{min-height:20px;color:var(--red);font-size:12px;font-weight:700;white-space:pre-wrap}.login-message.info{color:#244cb9}
 .sync-info{display:grid;gap:3px;min-width:0}.sync-info small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .logout-btn{border:0;background:transparent;color:#c6d2ee;padding:4px 0;text-align:left;font-weight:700;cursor:pointer;font-size:12px}
 .logout-btn:hover{color:#fff}
@@ -82,7 +82,7 @@
       <label>Password
         <input id="loginPassword" type="password" autocomplete="current-password" required>
       </label>
-      <button class="btn primary login-submit" type="submit">Sign In</button>
+      <button class="btn primary login-submit" id="loginButton" type="submit">Sign In</button>
       <div id="loginMessage" class="login-message"></div>
     </form>
   </section>
@@ -1201,31 +1201,76 @@ function friendlyAuthError(error){
   return messages[code]||error?.message||"Unable to sign in.";
 }
 
-const auth=firebase.auth();
+let auth=null;
 
-$("loginForm").addEventListener("submit",async event=>{
-  event.preventDefault();
+function setLoginMessage(message,type="error"){
+  const box=$("loginMessage");
+  box.textContent=message;
+  box.classList.toggle("info",type==="info");
+}
+
+async function performLogin(event){
+  if(event)event.preventDefault();
+
+  const button=$("loginButton");
   const email=$("loginEmail").value.trim();
   const password=$("loginPassword").value;
-  $("loginMessage").textContent="Signing in…";
+
+  if(!email||!password){
+    setLoginMessage("Enter both email and password.");
+    return;
+  }
+
+  if(!window.firebase){
+    setLoginMessage("Firebase SDK did not load. Refresh the page and check your internet connection.");
+    return;
+  }
+
+  if(typeof firebase.auth!=="function"){
+    setLoginMessage("Firebase Authentication SDK did not load. Hard-refresh the page using Command + Shift + R.");
+    return;
+  }
+
   try{
+    if(!auth)auth=firebase.auth();
+    button.disabled=true;
+    button.textContent="Signing In…";
+    setLoginMessage("Contacting Firebase…","info");
+
     await auth.signInWithEmailAndPassword(email,password);
-    $("loginMessage").textContent="";
+    setLoginMessage("Sign-in successful. Loading planner…","info");
   }catch(error){
     console.error("Login failed:",error);
-    $("loginMessage").textContent=friendlyAuthError(error);
+    const detail=[friendlyAuthError(error),error?.code?`Code: ${error.code}`:""].filter(Boolean).join("\n");
+    setLoginMessage(detail);
+  }finally{
+    button.disabled=false;
+    button.textContent="Sign In";
   }
-});
+}
+
+$("loginForm").addEventListener("submit",performLogin);
+$("loginButton").addEventListener("click",performLogin);
 
 $("logoutBtn").onclick=async()=>{
   try{
+    if(!auth&&typeof firebase.auth==="function")auth=firebase.auth();
     await auth.signOut();
   }catch(error){
     console.error("Logout failed:",error);
   }
 };
 
-auth.onAuthStateChanged(async user=>{
+if(!window.firebase){
+  setLoginMessage("Firebase core SDK failed to load.");
+}else if(typeof firebase.auth!=="function"){
+  setLoginMessage("Firebase Authentication SDK failed to load. Use Command + Shift + R to refresh.");
+}else{
+  auth=firebase.auth();
+  setLoginMessage("Authentication ready.","info");
+}
+
+if(auth)auth.onAuthStateChanged(async user=>{
   if(user){
     $("loginScreen").hidden=true;
     $("plannerApp").hidden=false;
