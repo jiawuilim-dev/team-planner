@@ -2,438 +2,143 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Team Planner</title>
-  <style>
-    :root { --ink:#172033; --muted:#687086; --line:#e5e8f0; --navy:#172a58; --blue:#3567f2; --pale:#f6f8fc; --green:#0e9f6e; --amber:#c47b00; --red:#d44e5e; --shadow:0 8px 30px rgba(31,45,81,.08); }
-    * { box-sizing:border-box; } body { margin:0; color:var(--ink); font:14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:var(--pale); }
-    button, input, select { font:inherit; } button { cursor:pointer; } button, h1, h2, h3, .metric .label { text-transform:capitalize; } .app { min-height:100vh; display:grid; grid-template-columns:240px minmax(0,1fr); }
-    aside { background:var(--navy); color:#f8faff; padding:26px 16px; display:flex; flex-direction:column; gap:28px; } .brand { font-size:19px; font-weight:700; letter-spacing:-.4px; padding:0 10px; } .brand span { color:#9fb9ff; }
-    nav { display:grid; gap:5px; } nav button { border:0; color:#bfcae6; background:transparent; text-align:left; border-radius:9px; padding:11px 12px; font-weight:600; } nav button.active, nav button:hover { color:#fff; background:#2b4179; }
-    .help { margin-top:auto; border-top:1px solid #405585; padding:20px 10px 0; color:#bfcae6; font-size:12px; }
-    main { padding:28px; max-width:1550px; width:100%; margin:auto; } .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; gap:15px; } h1 { margin:0; font-size:26px; letter-spacing:-.7px; } .sub { color:var(--muted); margin-top:4px; }
-    .btn { border:1px solid var(--line); background:#fff; border-radius:8px; padding:9px 13px; font-weight:650; color:var(--ink); } .btn.primary { background:var(--blue); border-color:var(--blue); color:#fff; } .btn:hover { filter:brightness(.97); } .team-switch { display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; margin-left:auto; } .team-switch button { border:0; background:#fff; color:var(--muted); padding:9px 12px; font-weight:650; } .team-switch button.active { background:#e9efff; color:#244cb9; }
-    .summary { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px; margin-bottom:20px; } .metric { background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:16px 18px; } .metric .label { color:var(--muted); font-weight:600; font-size:12px; } .metric strong { display:block; font-size:25px; margin-top:4px; letter-spacing:-.5px; } .metric small { color:var(--green); font-weight:600; }
-    .layout { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:20px; } .card { background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); }
-    .calendar-head { display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--line); } .calendar-head h2 { margin:0; font-size:17px; } .month-nav { display:flex; align-items:center; gap:9px; } .icon { border:1px solid var(--line); background:#fff; width:31px; height:31px; border-radius:7px; font-size:19px; line-height:1; }
-    .calendar { padding:14px 14px 18px; } .weekdays, .days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); } .weekdays div { color:var(--muted); padding:0 9px 9px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; }
-    .day { min-height:116px; border:1px solid var(--line); margin:-1px 0 0 -1px; padding:8px; background:#fff; overflow:hidden; } .day.muted { background:#fbfcfe; color:#a1a8b8; } .date { display:flex; justify-content:space-between; align-items:center; font-weight:650; margin-bottom:6px; } .today .date b { display:grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--blue); color:white; }
-    .event { border:0; display:block; width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:left; border-radius:4px; padding:3px 5px; margin:3px 0; color:#233045; font-size:11px; font-weight:650; } .event small { font-weight:500; opacity:.76; } .event[data-project="alpha"] { background:#dce7ff; } .event[data-project="beta"] { background:#d7f3e8; } .event[data-project="gamma"] { background:#fae5bd; } .event[data-project="delta"] { background:#f6dfe7; }
-    .view-switch { display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; } .view-switch button { border:0; background:#fff; color:var(--muted); padding:7px 10px; font-weight:650; } .view-switch button.active { background:#e9efff; color:#244cb9; } .daily { display:block; min-height:500px; } .daily-head { display:flex; justify-content:space-between; align-items:center; padding:4px 2px 18px; } .daily-head h3 { margin:0; font-size:15px; } .daily-stats { display:flex; gap:10px; } .daily-stat { border:1px solid var(--line); border-radius:7px; padding:6px 9px; color:var(--muted); font-size:12px; } .daily-stat b { color:var(--ink); } .daily-controls { display:flex; gap:8px; padding:0 0 14px; } .daily-controls select { padding:7px 8px; font-size:12px; min-width:0; } .project-balloon { border:1px solid var(--line); border-radius:9px; overflow:hidden; margin-bottom:12px; } .balloon-head { display:flex; justify-content:space-between; align-items:center; padding:11px 14px; background:#f7f9fc; } .balloon-head .schedule-project { font-size:13px; } .balloon-meta { color:var(--muted); font-size:12px; } .schedule { border:0; border-radius:0; overflow:hidden; } .schedule-row { display:grid; grid-template-columns:110px minmax(170px,1.3fr) minmax(150px,1fr) 80px 110px; align-items:center; gap:12px; padding:13px 14px; border-top:1px solid var(--line); } .schedule-row:first-child { border-top:0; } .schedule-row.header { background:#f7f9fc; color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.35px; } .schedule-project { display:flex; align-items:center; gap:8px; font-weight:650; } .status { display:inline-flex; width:max-content; padding:3px 7px; border-radius:20px; font-size:11px; font-weight:700; } .status.confirmed { background:#dcf4e8; color:#087352; } .status.pending { background:#fff0d2; color:#9a6200; } .empty-day { padding:55px 20px; text-align:center; color:var(--muted); } .empty-day strong { color:var(--ink); display:block; font-size:15px; margin-bottom:5px; }
-    .secondary { display:grid; gap:20px; } .data-card { padding:20px; } .data-card h2 { margin:0 0 4px; font-size:18px; } .data-card > p { margin:0 0 18px; color:var(--muted); } .data-table { width:100%; border-collapse:collapse; } .data-table th { background:#f7f9fc; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.35px; text-align:left; } .data-table th,.data-table td { padding:12px 11px; border-bottom:1px solid var(--line); } .data-table tr:last-child td { border-bottom:0; } .inline-person { display:flex; align-items:center; gap:8px; font-weight:650; } .mini-bar { height:7px; min-width:100px; background:#edf0f5; border-radius:8px; overflow:hidden; } .mini-bar span { display:block; height:100%; background:var(--blue); border-radius:8px; } .report-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; } .report-metric { border:1px solid var(--line); border-radius:10px; padding:16px; } .report-metric span { color:var(--muted); font-size:12px; font-weight:650; } .report-metric strong { display:block; font-size:25px; margin-top:4px; } .allocation { display:grid; gap:12px; } .allocation-row { display:grid; grid-template-columns:170px 1fr 48px; gap:10px; align-items:center; font-size:13px; } .allocation-row .bar { margin:0; }
-    .side { display:grid; gap:20px; align-content:start; } .side h2 { font-size:16px; margin:0; } .side-header { padding:18px 18px 12px; display:flex; justify-content:space-between; align-items:center; } .team-list { padding:0 18px 14px; } .person { padding:12px 0; border-top:1px solid var(--line); } .person:first-child { border-top:0; } .person-line { display:flex; gap:9px; align-items:center; justify-content:space-between; } .who { display:flex; align-items:center; gap:8px; font-weight:650; } .avatar { width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-size:10px; color:#fff; background:#5d6c91; } .person small { color:var(--muted); } .bar { height:6px; background:#edf0f5; border-radius:10px; margin:8px 0 3px; overflow:hidden; } .bar span { display:block; height:100%; border-radius:10px; background:var(--green); } .bar span.warn { background:var(--amber); } .bar span.over { background:var(--red); }
-    .project-list { padding:0 12px 14px; display:grid; gap:4px; } .project-row { display:flex; gap:5px; align-items:stretch; } .project-item { width:100%; border:1px solid transparent; border-radius:8px; padding:10px 8px; text-align:left; background:#fff; display:flex; align-items:center; gap:9px; color:var(--ink); font-weight:650; } .project-item:hover,.project-item.selected { border-color:#b9cafa; background:#f2f6ff; } .name-edit { border:1px solid var(--line); border-radius:7px; padding:5px 7px; color:var(--blue); background:#fff; font-size:11px; font-weight:700; } .person-line .name-edit { margin-left:auto; } .dot { width:9px; height:9px; border-radius:50%; flex:0 0 auto; background:#9b8cff; } .dot.a { background:#799dff; }.dot.b{background:#63c89c}.dot.c{background:#eba92c}.dot.d{background:#df819f}.event[data-project^="custom"] { background:#e8e1fb; }.drop-hint { padding:0 18px 12px; color:var(--muted); font-size:12px; }
-    .draggable { cursor:grab; user-select:none; } .draggable:active { cursor:grabbing; } .draggable.dragging { opacity:.45; } .day.drop-target { background:#eaf0ff; outline:2px dashed #7194ff; outline-offset:-3px; } .drag-mark { color:var(--blue); font-size:12px; }
-    dialog { width:min(500px, calc(100vw - 30px)); border:0; border-radius:14px; box-shadow:0 24px 80px rgba(14,24,50,.28); padding:0; color:var(--ink); } dialog::backdrop { background:rgba(17,29,59,.45); } .modal { padding:22px; } .modal h2 { margin:0 0 18px; font-size:20px; } .form { display:grid; gap:13px; } label { display:grid; gap:6px; font-size:12px; font-weight:700; color:#4d566c; } input, select { border:1px solid #d8deea; border-radius:7px; padding:10px; color:var(--ink); background:white; } .modal-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:20px; }
-    @media (max-width:1050px) { .layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.team-card{grid-column:span 2}.day{min-height:100px;} } @media (max-width:720px) { .app{display:block} aside{display:none} main{padding:18px 12px}.top{align-items:flex-start}.summary{grid-template-columns:1fr}.side{grid-template-columns:1fr}.team-card{grid-column:auto}.day{min-height:82px;padding:5px}.weekdays div{padding:0 3px 7px;font-size:9px}.event{font-size:9px;padding:2px}.event small{display:none}.calendar{padding:10px}.calendar-head{padding:14px}.top .sub{display:none}.daily-head{align-items:flex-start;gap:12px;flex-direction:column}.schedule{overflow:auto}.schedule-row{min-width:620px} }
-  </style>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FieldFlow Team Planner V2</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app">
-    <aside><div class="brand">field<span>flow</span></div><nav><button class="active" data-page="calendar">▦ &nbsp; Team calendar</button><button data-page="projects">◫ &nbsp; Projects</button><button data-page="manpower">◉ &nbsp; Manpower</button><button data-page="reports">▤ &nbsp; Reports</button></nav><div class="help">Service & project operations<br>Plan capacity with confidence.</div></aside>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">field<span>flow</span><small>V2</small></div>
+      <nav>
+        <button class="nav-btn active" data-view="calendar">Team Calendar</button>
+        <button class="nav-btn" data-view="manpower">Manpower</button>
+        <button class="nav-btn" data-view="projects">Projects</button>
+      </nav>
+      <div class="sync-card">
+        <span id="syncDot" class="sync-dot"></span>
+        <div><strong id="syncText">Connecting…</strong><small>Firestore: planner/v2</small></div>
+      </div>
+    </aside>
+
     <main>
-      <div class="top"><div><h1 id="pageTitle">Project Team Calendar</h1><div class="sub" id="pageSub">Project manpower assignments and capacity</div></div><div class="team-switch"><button class="active" data-team="project">Project Team</button><button data-team="service">Service Team</button></div><button class="btn primary" id="newAssignment">+ New Assignment</button></div>
-      <div id="calendarContent"><section class="summary"><div class="metric"><div class="label">Assigned this month</div><strong id="assignedCount">18 shifts</strong><small>Across 4 active projects</small></div><div class="metric"><div class="label">Available capacity</div><strong>240 hours</strong><small>63% of team capacity</small></div><div class="metric"><div class="label">Overallocated manpower</div><strong id="overloadCount">0 people</strong><small>All current assignments are within capacity</small></div></section>
-      <section class="layout"><div class="card"><div class="calendar-head"><h2 id="monthLabel"></h2><div class="month-nav"><div class="view-switch"><button id="monthView" class="active">Month</button><button id="dayView">Day</button></div><button class="icon" id="prevMonth" aria-label="Previous period">‹</button><button class="btn" id="todayBtn">Today</button><button class="icon" id="nextMonth" aria-label="Next period">›</button></div></div><div class="calendar"><div class="weekdays" id="weekdays"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div><div class="days" id="days"></div></div></div>
-      <div class="side"><div class="card"><div class="side-header"><h2>Active projects</h2><button class="name-edit" id="addProject">+ Add</button></div><div class="project-list" id="projectList"></div></div><div class="card team-card"><div class="side-header"><h2>Active team</h2><button class="name-edit" id="addManpower">+ Add</button></div><div class="drop-hint">Double-click a project or team member to rename it. Select a project, then drag manpower onto a date.</div><div class="team-list" id="teamList"></div></div></div></section></div><section id="secondaryContent" class="secondary" hidden></section>
+      <header class="topbar">
+        <div>
+          <h1 id="viewTitle">Team Calendar</h1>
+          <p id="viewSub">Shared manpower assignments</p>
+        </div>
+        <div class="actions">
+          <div class="team-toggle">
+            <button class="team-btn active" data-team="all">All</button>
+            <button class="team-btn" data-team="project">Project</button>
+            <button class="team-btn" data-team="service">Service</button>
+          </div>
+          <button class="btn primary" id="addAssignmentBtn">+ Assignment</button>
+        </div>
+      </header>
+
+      <section id="calendarView">
+        <div class="metrics">
+          <article><span>Assignments this month</span><strong id="metricAssignments">0</strong></article>
+          <article><span>Active manpower</span><strong id="metricManpower">0</strong></article>
+          <article><span>Booked hours</span><strong id="metricHours">0h</strong></article>
+        </div>
+
+        <div class="calendar-card">
+          <div class="calendar-toolbar">
+            <button class="icon-btn" id="prevMonth">‹</button>
+            <h2 id="monthLabel"></h2>
+            <button class="icon-btn" id="nextMonth">›</button>
+            <button class="btn" id="todayBtn">Today</button>
+          </div>
+          <div class="weekdays">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+          <div id="calendarGrid" class="calendar-grid"></div>
+        </div>
+      </section>
+
+      <section id="manpowerView" hidden>
+        <div class="section-head">
+          <div><h2>Manpower Directory</h2><p>Non-Singapore employees imported from the master list.</p></div>
+          <button class="btn primary" id="addEmployeeBtn">+ Manpower</button>
+        </div>
+        <div class="toolbar-row">
+          <input id="employeeSearch" placeholder="Search name, position, country…">
+        </div>
+        <div id="employeeList" class="table-card"></div>
+      </section>
+
+      <section id="projectsView" hidden>
+        <div class="section-head">
+          <div><h2>Projects</h2><p>Projects available for manpower assignment.</p></div>
+          <button class="btn primary" id="addProjectBtn">+ Project</button>
+        </div>
+        <div id="projectList" class="project-grid"></div>
+      </section>
     </main>
   </div>
-  <dialog id="assignmentDialog"><form method="dialog" class="modal" id="assignmentForm"><h2>Assign manpower</h2><div class="form"><label>Project<select id="project"><option value="alpha">Alpha Site Expansion</option><option value="beta">Beta Maintenance</option><option value="gamma">Gamma Commissioning</option><option value="delta">Delta Retrofit</option></select></label><label>Manpower<select id="engineer"><option>Amir Rahman</option><option>Chloe Tan</option><option>Daniel Wong</option><option>Priya Nair</option></select></label><label>Start date<input id="assignmentDate" type="date" required></label><label>End date<input id="endDate" type="date" required></label><label>Hours<input id="hours" type="number" min="1" max="24" value="8" required></label><label>Status<select id="status"><option>Confirmed</option><option>Pending</option></select></label></div><div class="modal-actions"><button class="btn" value="cancel">Cancel</button><button class="btn" id="deleteAssignment" value="cancel" hidden>Delete</button><button class="btn primary" id="saveAssignment" value="default">Save assignment</button></div></form></dialog>
-  <dialog id="nameDialog"><form method="dialog" class="modal" id="nameForm"><h2 id="nameDialogTitle">Rename</h2><div class="form"><label id="nameFieldLabel">Name<input id="nameInput" required maxlength="60"></label></div><div class="modal-actions"><button class="btn" value="cancel">Cancel</button><button class="btn primary" id="saveName" value="default">Save name</button></div></form></dialog>
-  <dialog id="createDialog"><form method="dialog" class="modal" id="createForm"><h2 id="createTitle">Add</h2><div class="form"><label id="createNameLabel">Name<input id="createName" required maxlength="60"></label><label id="createRoleLabel">Job title<select id="createRole"><option>Project Engineer</option><option>Commissioning Engineer</option><option>Commissioning Technician</option><option>General Worker</option></select></label><label id="createTeamLabel">Team<select id="createTeam"><option value="project">Project Team</option><option value="service">Service Team</option></select></label></div><div class="modal-actions"><button class="btn" value="cancel">Cancel</button><button class="btn primary" id="saveCreate" value="default">Add</button></div></form></dialog>
-  <script>
-    const projectNames={alpha:'Alpha Site',beta:'Beta Maintenance',gamma:'Gamma Commission.',delta:'Delta Retrofit'};
-    const projectFullNames={alpha:'Alpha Site Expansion',beta:'Beta Maintenance',gamma:'Gamma Commissioning',delta:'Delta Retrofit'};
-    let selectedProject='alpha';
-    let activeDate=new Date(2026,7,2);
-    let viewMode='month';
-    let dailyProjectFilter='all', dailyEngineerFilter='all', dailySort='time';
-    const engineers=[["Muhammad Ariff Bin A'zan", "MA", "Project Engineer", "project"], ["Lim Aik Chan", "LA", "Project Engineer", "project"], ["Nur Nadzirah Syahirah Abdul Mudtalib", "NN", "Project Administrative", "service"], ["Mohamad Arif Haikal Bin Khyar", "MA", "Project Supervisor", "project"], ["Mohammad Amirul Hizam Bin Alias", "MA", "Service Technician", "service"], ["Mohd Hizani Bin A’zan", "MH", "Service Technician", "service"], ["Muhammad Fariesh Afhan Bin Mohd Fadil", "MF", "Service Technician", "service"], ["Muhammad Aiman Daniel Bin Mohd Asri", "MA", "Service Technician", "service"], ["Muhamad Amir Faisal Bin Tajudin", "MA", "Service Technician", "service"], ["Muhammad Zulfakhrul Aiman Bin Mohd Roslan", "MZ", "Service Technician", "service"], ["Tayalan A/L Chandrasekaran", "TA", "Service Technician", "service"], ["Ong Yee Soon", "OY", "Commissioning Technician", "project"], ["Mohd Yazid Bin Mohd Shah", "MY", "Project Engineer", "project"], ["Amir Hafiz Bin Zubir", "AH", "Project Engineer", "project"], ["Asif", "A", "General Worker", "project"], ["Abdullah", "A", "General Worker", "project"], ["Masum", "M", "General Worker", "project"], ["Mansor", "M", "General Worker", "project"], ["Sulaiman", "S", "General Worker", "project"], ["Mohamad Akmal Bin Mohd Shah", "MA", "Project Supervisor", "project"], ["Muhammad Daniel Bin Zamzaidi", "MD", "Project Supervisor", "project"], ["Muhammad Khairul Hafiz Bin Md Rejulin", "MK", "Project Supervisor", "project"], ["Muhamad Saiful Edzwan Bin Mohd Khairol", "MS", "Commissioning Technician", "project"], ["Moslam", "M", "General Worker", "project"], ["Ashfaq", "A", "General Worker", "project"], ["Deriansyah Wengkang", "DW", "Project Engineer", "project"], ["Slamet", "S", "Project Supervisor", "project"], ["Yehezkiel Silaban", "YS", "Project Supervisor", "project"], ["Frans Neo Nisa", "FN", "General Worker", "project"], ["M Bintang", "MB", "General Worker", "project"], ["Dedy S", "DS", "Service Engineer", "service"], ["Bima", "B", "Service Administrative", "service"], ["Service Technician", "ST", "Service Technician", "service"], ["Very", "V", "Service Technician", "service"], ["Fajar", "F", "Service Technician", "service"], ["Suprihatin", "S", "Service Technician", "service"], ["Gosen Manalu", "GM", "Service Technician", "service"], ["Raju", "R", "Service Technician", "service"], ["Tapani Kalervo Heininen", "TK", "Project Supervisor", "project"], ["Xu Bin", "XB", "Project Supervisor", "project"], ["Mika Oksanen", "MO", "Commissioning Technician", "project"], ["Surit Apiwan", "SA", "Project Engineer", "project"], ["Arunee Wichittkul (Pum)", "AW", "Project Administrative", "project"], ["Teerayut Dantes (Noom)", "TD", "General Worker", "project"], ["Nattachai Singdee (Nat)", "NS", "General Worker", "project"], ["Bunyang Phansawang (Yang)", "BP", "General Worker", "project"], ["Visittisak Saengjun (View)", "VS", "General Worker", "project"], ["Tawep Wannaow (Tawep)", "TW", "General Worker", "project"]];
-    const assignments=[
-      {date:'2026-08-02',project:'alpha',engineer:'Amir Rahman',hours:8},{date:'2026-08-02',project:'gamma',engineer:'Priya Nair',hours:6,status:'Pending'},{date:'2026-08-03',project:'alpha',engineer:'Amir Rahman',hours:8},{date:'2026-08-04',project:'alpha',engineer:'Chloe Tan',hours:8},{date:'2026-08-05',project:'beta',engineer:'Daniel Wong',hours:8},{date:'2026-08-06',project:'gamma',engineer:'Priya Nair',hours:8,status:'Pending'},{date:'2026-08-07',project:'beta',engineer:'Amir Rahman',hours:6},{date:'2026-08-10',project:'delta',engineer:'Chloe Tan',hours:8},{date:'2026-08-11',project:'alpha',engineer:'Daniel Wong',hours:8},{date:'2026-08-12',project:'gamma',engineer:'Priya Nair',hours:8},{date:'2026-08-13',project:'beta',engineer:'Amir Rahman',hours:8},{date:'2026-08-14',project:'delta',engineer:'Chloe Tan',hours:8},{date:'2026-08-17',project:'alpha',engineer:'Daniel Wong',hours:8},{date:'2026-08-18',project:'gamma',engineer:'Priya Nair',hours:8},{date:'2026-08-19',project:'beta',engineer:'Amir Rahman',hours:8},{date:'2026-08-20',project:'alpha',engineer:'Chloe Tan',hours:8,status:'Pending'},{date:'2026-08-24',project:'delta',engineer:'Daniel Wong',hours:8},{date:'2026-08-25',project:'beta',engineer:'Priya Nair',hours:8},{date:'2026-08-26',project:'alpha',engineer:'Amir Rahman',hours:8},{date:'2026-08-27',project:'gamma',engineer:'Chloe Tan',hours:8}
-    ];
-    const fmt=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); const days=document.getElementById('days');
-    function addDropEvents(cell,key){cell.addEventListener('dragover',e=>{e.preventDefault();cell.classList.add('drop-target')});cell.addEventListener('dragleave',()=>cell.classList.remove('drop-target'));cell.addEventListener('drop',e=>{e.preventDefault();cell.classList.remove('drop-target');const engineer=e.dataTransfer.getData('text/plain');if(!engineer)return;document.getElementById('engineer').value=engineer;document.getElementById('project').value=selectedProject;document.getElementById('assignmentDate').value=key;dialog.showModal()})}
-    function render(){const y=activeDate.getFullYear(),m=activeDate.getMonth(), weekdays=document.getElementById('weekdays'); document.getElementById('monthView').classList.toggle('active',viewMode==='month');document.getElementById('dayView').classList.toggle('active',viewMode==='day');days.innerHTML='';if(viewMode==='day'){weekdays.style.display='none';renderDay();renderProjectList();renderTeam();return}days.className='days';weekdays.style.display='grid';document.getElementById('monthLabel').textContent=activeDate.toLocaleString('en',{month:'long',year:'numeric'}); const first=new Date(y,m,1), start=(first.getDay()+6)%7, total=new Date(y,m+1,0).getDate(), prior=new Date(y,m,0).getDate(); for(let i=0;i<42;i++){let d, muted=false;if(i<start){d=new Date(y,m-1,prior-start+i+1);muted=true}else if(i>=start+total){d=new Date(y,m+1,i-start-total+1);muted=true}else d=new Date(y,m,i-start+1);const key=fmt(d), cell=document.createElement('div');cell.className='day'+(muted?' muted':'')+(key==='2026-08-02'?' today':'');cell.innerHTML='<div class="date"><b>'+d.getDate()+'</b></div>';cell.querySelector('.date').addEventListener('click',()=>{activeDate=d;viewMode='day';render()});addDropEvents(cell,key); assignments.filter(a=>a.date===key).forEach(a=>{const e=document.createElement('button');e.className='event';e.dataset.project=a.project;e.title=projectNames[a.project]+' · '+a.engineer+' · '+a.hours+'h';e.innerHTML=projectNames[a.project]+' <small>· '+a.engineer.split(' ')[0]+'</small>';cell.appendChild(e)});days.appendChild(cell)}renderProjectList();renderTeam()}
-    function renderDay(){const key=fmt(activeDate),allItems=assignments.filter(a=>a.date===key),items=allItems.filter(a=>(dailyProjectFilter==='all'||a.project===dailyProjectFilter)&&(dailyEngineerFilter==='all'||a.engineer===dailyEngineerFilter)).slice();if(dailySort==='project')items.sort((a,b)=>projectFullNames[a.project].localeCompare(projectFullNames[b.project]));if(dailySort==='engineer')items.sort((a,b)=>a.engineer.localeCompare(b.engineer));if(dailySort==='status')items.sort((a,b)=>(a.status||'Confirmed').localeCompare(b.status||'Confirmed'));const hours=items.reduce((total,a)=>total+a.hours,0),names=new Set(items.map(a=>a.engineer)).size;document.getElementById('monthLabel').textContent=activeDate.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long',year:'numeric'});days.className='days daily';const projectOptions='<option value="all">All projects</option>'+Object.entries(projectFullNames).map(([key,name])=>'<option value="'+key+'" '+(dailyProjectFilter===key?'selected':'')+'>'+name+'</option>').join('');const engineerOptions='<option value="all">All engineers</option>'+engineers.map(([name])=>'<option value="'+name+'" '+(dailyEngineerFilter===name?'selected':'')+'>'+name+'</option>').join('');const controls='<div class="daily-controls"><select id="dailyProject" aria-label="Filter by project">'+projectOptions+'</select><select id="dailyEngineer" aria-label="Filter by engineer">'+engineerOptions+'</select><select id="dailySort" aria-label="Sort daily plan"><option value="time" '+(dailySort==='time'?'selected':'')+'>Sort: Time</option><option value="project" '+(dailySort==='project'?'selected':'')+'>Sort: Project</option><option value="engineer" '+(dailySort==='engineer'?'selected':'')+'>Sort: Engineer</option><option value="status" '+(dailySort==='status'?'selected':'')+'>Sort: Status</option></select></div>';if(!items.length){days.innerHTML='<div class="daily-head"><h3>Daily work plan</h3></div>'+controls+'<div class="empty-day"><strong>No matching assignments</strong>Adjust the filters or drag an active team member here to add an assignment.</div>';bindDailyControls();addDropEvents(days,key);return}const color={alpha:'a',beta:'b',gamma:'c',delta:'d'};days.innerHTML='<div class="daily-head"><h3>Daily work plan</h3><div class="daily-stats"><span class="daily-stat"><b>'+items.length+'</b> assignments</span><span class="daily-stat"><b>'+names+'</b> engineers</span><span class="daily-stat"><b>'+hours+'h</b> booked</span></div></div>'+controls+'<div class="schedule"><div class="schedule-row header"><span>Time</span><span>Project</span><span>Engineer</span><span>Hours</span><span>Status</span></div>'+items.map((a,index)=>'<div class="schedule-row"><span>'+(index===0?'08:00':String(8+items.slice(0,index).reduce((t,x)=>t+x.hours,0)).padStart(2,'0'))+':00</span><span class="schedule-project"><i class="dot '+color[a.project]+'"></i>'+projectFullNames[a.project]+'</span><span>'+a.engineer+'</span><span>'+a.hours+'h</span><span class="status '+(a.status||'confirmed').toLowerCase()+'">'+(a.status||'Confirmed')+'</span></div>').join('')+'</div>';bindDailyControls();addDropEvents(days,key)}
-    function bindDailyControls(){document.getElementById('dailyProject').onchange=e=>{dailyProjectFilter=e.target.value;renderDay()};document.getElementById('dailyEngineer').onchange=e=>{dailyEngineerFilter=e.target.value;renderDay()};document.getElementById('dailySort').onchange=e=>{dailySort=e.target.value;renderDay()}}
-    function renderProjectList(){const color={alpha:'a',beta:'b',gamma:'c',delta:'d'};document.getElementById('projectList').innerHTML=Object.keys(projectFullNames).map(key=>'<button class="project-item '+(key===selectedProject?'selected':'')+'" data-project="'+key+'"><span class="dot '+color[key]+'"></span>'+projectFullNames[key]+'</button>').join('');document.querySelectorAll('.project-item').forEach(button=>button.onclick=()=>{selectedProject=button.dataset.project;renderProjectList()})}
-    function renderTeam(){const month=activeDate.getMonth(),year=activeDate.getFullYear();const used={};engineers.forEach(e=>used[e[0]]=0);assignments.forEach(a=>{const d=new Date(a.date+'T00:00');if(d.getMonth()===month&&d.getFullYear()===year)used[a.engineer]=(used[a.engineer]||0)+a.hours});document.getElementById('teamList').innerHTML=engineers.map(([name,ini])=>{let h=used[name]||0,p=Math.min(100,Math.round(h/96*100)),c=h>96?'over':p>85?'warn':'';return '<div class="person draggable" draggable="true" data-engineer="'+name+'"><div class="person-line"><div class="who"><span class="avatar">'+ini+'</span>'+name+'</div><span class="drag-mark">↕ Drag</span></div><div class="bar"><span class="'+c+'" style="width:'+p+'%"></span></div><small>'+(h>96?'Over capacity':(96-h)+'h available')+'</small></div>'}).join('');document.querySelectorAll('.draggable').forEach(person=>{person.addEventListener('dragstart',e=>{person.classList.add('dragging');e.dataTransfer.setData('text/plain',person.dataset.engineer);e.dataTransfer.effectAllowed='copy'});person.addEventListener('dragend',()=>person.classList.remove('dragging'))});document.getElementById('assignedCount').textContent=assignments.filter(a=>{const d=new Date(a.date+'T00:00');return d.getMonth()===month&&d.getFullYear()===year}).length+' shifts';document.getElementById('overloadCount').textContent=engineers.filter(e=>(used[e[0]]||0)>96).length+' people'}
-    function renderSecondary(page){const secondary=document.getElementById('secondaryContent'),calendar=document.getElementById('calendarContent'),titles={calendar:['Team calendar','Project work and service manpower, in one view'],projects:['Active projects','Current delivery workload and staffing'],engineers:['Active engineers','Current team capacity and assignment status'],reports:['Reports','Operational planning summary for August 2026']};document.getElementById('pageTitle').textContent=titles[page][0];document.getElementById('pageSub').textContent=titles[page][1];document.getElementById('newAssignment').hidden=page!=='calendar';calendar.hidden=page!=='calendar';secondary.hidden=page==='calendar';document.querySelectorAll('nav button').forEach(button=>button.classList.toggle('active',button.dataset.page===page));if(page==='calendar')return;const monthly=assignments.filter(a=>{const d=new Date(a.date+'T00:00');return d.getMonth()===7&&d.getFullYear()===2026});const color={alpha:'a',beta:'b',gamma:'c',delta:'d'};if(page==='projects'){secondary.innerHTML='<div class="card data-card"><h2>Project register</h2><p>Project staffing totals for the current planning period.</p><table class="data-table"><thead><tr><th>Project</th><th>Assignments</th><th>Booked hours</th><th>Pending</th><th>Staffed by</th></tr></thead><tbody>'+Object.keys(projectFullNames).map(key=>{const rows=monthly.filter(a=>a.project===key),hours=rows.reduce((t,a)=>t+a.hours,0),people=new Set(rows.map(a=>a.engineer)).size,pending=rows.filter(a=>a.status==='Pending').length;return '<tr><td class="schedule-project"><i class="dot '+color[key]+'"></i>'+projectFullNames[key]+'</td><td>'+rows.length+'</td><td>'+hours+'h</td><td>'+(pending?'<span class="status pending">'+pending+' pending</span>':'<span class="status confirmed">On track</span>')+'</td><td>'+people+' engineers</td></tr>'}).join('')+'</tbody></table></div>';return}if(page==='engineers'){const used={};engineers.forEach(e=>used[e[0]]=0);monthly.forEach(a=>used[a.engineer]+=a.hours);secondary.innerHTML='<div class="card data-card"><h2>Engineer capacity</h2><p>Hours and assignment status in the active month.</p><table class="data-table"><thead><tr><th>Engineer</th><th>Booked hours</th><th>Capacity</th><th>Assignments</th><th>Status</th></tr></thead><tbody>'+engineers.map(([name,ini])=>{const hours=used[name],pct=Math.round(hours/96*100),count=monthly.filter(a=>a.engineer===name).length;return '<tr><td><span class="inline-person"><span class="avatar">'+ini+'</span>'+name+'</span></td><td>'+hours+'h</td><td><div class="mini-bar"><span style="width:'+Math.min(pct,100)+'%"></span></div> '+pct+'%</td><td>'+count+'</td><td>'+(pct>85?'<span class="status pending">Review load</span>':'<span class="status confirmed">Available</span>')+'</td></tr>'}).join('')+'</tbody></table></div>';return}const totalHours=monthly.reduce((t,a)=>t+a.hours,0),pending=monthly.filter(a=>a.status==='Pending').length;secondary.innerHTML='<div class="report-grid"><div class="card report-metric"><span>Booked hours</span><strong>'+totalHours+'h</strong></div><div class="card report-metric"><span>Assignments</span><strong>'+monthly.length+'</strong></div><div class="card report-metric"><span>Pending confirmation</span><strong>'+pending+'</strong></div></div><div class="card data-card"><h2>Project hour allocation</h2><p>How planned manpower is distributed across active projects.</p><div class="allocation">'+Object.keys(projectFullNames).map(key=>{const hours=monthly.filter(a=>a.project===key).reduce((t,a)=>t+a.hours,0),pct=totalHours?Math.round(hours/totalHours*100):0;return '<div class="allocation-row"><span class="schedule-project"><i class="dot '+color[key]+'"></i>'+projectFullNames[key]+'</span><div class="bar"><span style="width:'+pct+'%"></span></div><b>'+hours+'h</b></div>'}).join('')+'</div></div>'}
-    function renderTeam(){const month=activeDate.getMonth(),year=activeDate.getFullYear(),used={};engineers.forEach(e=>used[e[0]]=0);assignments.forEach(a=>{const d=new Date(a.date+'T00:00');if(d.getMonth()===month&&d.getFullYear()===year)used[a.engineer]=(used[a.engineer]||0)+a.hours});document.getElementById('teamList').innerHTML=engineers.map(([name,ini,title])=>{const h=used[name]||0,p=Math.min(100,Math.round(h/96*100)),c=h>96?'over':p>85?'warn':'';return '<div class="person draggable" draggable="true" data-engineer="'+name+'"><div class="person-line"><div class="who"><span class="avatar">'+ini+'</span>'+name+'</div><span class="drag-mark">↕ Drag</span></div><div class="bar"><span class="'+c+'" style="width:'+p+'%"></span></div><small>'+title+' · '+(h>96?'Over capacity':(96-h)+'h available')+'</small></div>'}).join('');document.querySelectorAll('.draggable').forEach(person=>{person.addEventListener('dragstart',e=>{person.classList.add('dragging');e.dataTransfer.setData('text/plain',person.dataset.engineer);e.dataTransfer.effectAllowed='copy'});person.addEventListener('dragend',()=>person.classList.remove('dragging'))});document.getElementById('assignedCount').textContent=assignments.filter(a=>{const d=new Date(a.date+'T00:00');return d.getMonth()===month&&d.getFullYear()===year}).length+' shifts';document.getElementById('overloadCount').textContent=engineers.filter(e=>(used[e[0]]||0)>96).length+' people'}
-    function renderSecondary(page){const secondary=document.getElementById('secondaryContent'),calendar=document.getElementById('calendarContent'),titles={calendar:['Team calendar','Project work and service manpower, in one view'],projects:['Active projects','Current delivery workload and staffing'],manpower:['Manpower','Current team capacity and assignment status'],reports:['Reports','Operational planning summary for August 2026']};document.getElementById('pageTitle').textContent=titles[page][0];document.getElementById('pageSub').textContent=titles[page][1];document.getElementById('newAssignment').hidden=page!=='calendar';calendar.hidden=page!=='calendar';secondary.hidden=page==='calendar';document.querySelectorAll('nav button').forEach(button=>button.classList.toggle('active',button.dataset.page===page));if(page==='calendar')return;const monthly=assignments.filter(a=>{const d=new Date(a.date+'T00:00');return d.getMonth()===7&&d.getFullYear()===2026}),color={alpha:'a',beta:'b',gamma:'c',delta:'d'};if(page==='projects'){secondary.innerHTML='<div class="card data-card"><h2>Project register</h2><p>Project staffing totals for the current planning period.</p><table class="data-table"><thead><tr><th>Project</th><th>Assignments</th><th>Booked hours</th><th>Pending</th><th>Staffed by</th></tr></thead><tbody>'+Object.keys(projectFullNames).map(key=>{const rows=monthly.filter(a=>a.project===key),hours=rows.reduce((t,a)=>t+a.hours,0),people=new Set(rows.map(a=>a.engineer)).size,pending=rows.filter(a=>a.status==='Pending').length;return '<tr><td class="schedule-project"><i class="dot '+color[key]+'"></i>'+projectFullNames[key]+'</td><td>'+rows.length+'</td><td>'+hours+'h</td><td>'+(pending?'<span class="status pending">'+pending+' pending</span>':'<span class="status confirmed">On track</span>')+'</td><td>'+people+' people</td></tr>'}).join('')+'</tbody></table></div>';return}if(page==='manpower'){const used={};engineers.forEach(e=>used[e[0]]=0);monthly.forEach(a=>used[a.engineer]+=a.hours);secondary.innerHTML='<div class="card data-card"><h2>Manpower capacity</h2><p>Roles, booked hours, and availability in the active month.</p><table class="data-table"><thead><tr><th>Team member</th><th>Title</th><th>Booked hours</th><th>Capacity</th><th>Status</th></tr></thead><tbody>'+engineers.map(([name,ini,title])=>{const hours=used[name],pct=Math.round(hours/96*100);return '<tr><td><span class="inline-person"><span class="avatar">'+ini+'</span>'+name+'</span></td><td>'+title+'</td><td>'+hours+'h</td><td><div class="mini-bar"><span style="width:'+Math.min(pct,100)+'%"></span></div> '+pct+'%</td><td>'+(pct>85?'<span class="status pending">Review load</span>':'<span class="status confirmed">Available</span>')+'</td></tr>'}).join('')+'</tbody></table></div>';return}const totalHours=monthly.reduce((t,a)=>t+a.hours,0),pending=monthly.filter(a=>a.status==='Pending').length;secondary.innerHTML='<div class="report-grid"><div class="card report-metric"><span>Booked hours</span><strong>'+totalHours+'h</strong></div><div class="card report-metric"><span>Assignments</span><strong>'+monthly.length+'</strong></div><div class="card report-metric"><span>Pending confirmation</span><strong>'+pending+'</strong></div></div><div class="card data-card"><h2>Project hour allocation</h2><p>How planned manpower is distributed across active projects.</p><div class="allocation">'+Object.keys(projectFullNames).map(key=>{const hours=monthly.filter(a=>a.project===key).reduce((t,a)=>t+a.hours,0),pct=totalHours?Math.round(hours/totalHours*100):0;return '<div class="allocation-row"><span class="schedule-project"><i class="dot '+color[key]+'"></i>'+projectFullNames[key]+'</span><div class="bar"><span style="width:'+pct+'%"></span></div><b>'+hours+'h</b></div>'}).join('')+'</div></div>'}
-    document.getElementById('prevMonth').onclick=()=>{viewMode==='day'?activeDate.setDate(activeDate.getDate()-1):activeDate.setMonth(activeDate.getMonth()-1);render()};document.getElementById('nextMonth').onclick=()=>{viewMode==='day'?activeDate.setDate(activeDate.getDate()+1):activeDate.setMonth(activeDate.getMonth()+1);render()};document.getElementById('todayBtn').onclick=()=>{activeDate=new Date(2026,7,2);render()};document.getElementById('monthView').onclick=()=>{viewMode='month';render()};document.getElementById('dayView').onclick=()=>{viewMode='day';render()};document.querySelectorAll('nav button').forEach(button=>button.onclick=()=>renderSecondary(button.dataset.page));
-    const dialog=document.getElementById('assignmentDialog');let editingAssignment=null;function openAssignment(assignment=null,date=fmt(activeDate)){editingAssignment=assignment;document.querySelector('#assignmentDialog h2').textContent=assignment?'Edit assignment':'Assign manpower';document.getElementById('deleteAssignment').hidden=!assignment;document.getElementById('project').value=assignment?assignment.project:selectedProject;document.getElementById('engineer').value=assignment?assignment.engineer:engineers[0][0];document.getElementById('assignmentDate').value=assignment?assignment.date:date;document.getElementById('hours').value=assignment?assignment.hours:8;document.getElementById('status').value=assignment?(assignment.status||'Confirmed'):'Confirmed';dialog.showModal()}document.getElementById('newAssignment').onclick=()=>openAssignment();document.getElementById('deleteAssignment').onclick=()=>{if(editingAssignment){assignments.splice(assignments.indexOf(editingAssignment),1);editingAssignment=null;render()}};document.getElementById('assignmentForm').addEventListener('submit',e=>{if(e.submitter.id!=='saveAssignment')return;const value={date:document.getElementById('assignmentDate').value,project:document.getElementById('project').value,engineer:document.getElementById('engineer').value,hours:Number(document.getElementById('hours').value),status:document.getElementById('status').value};if(editingAssignment)Object.assign(editingAssignment,value);else assignments.push(value);activeDate=new Date(value.date+'T00:00');editingAssignment=null;render()});function addDropEvents(cell,key){cell.addEventListener('dragover',e=>{e.preventDefault();cell.classList.add('drop-target')});cell.addEventListener('dragleave',()=>cell.classList.remove('drop-target'));cell.addEventListener('drop',e=>{e.preventDefault();cell.classList.remove('drop-target');const engineer=e.dataTransfer.getData('text/plain');if(!engineer)return;openAssignment(null,key);document.getElementById('engineer').value=engineer;document.getElementById('project').value=selectedProject});cell.addEventListener('click',e=>{const event=e.target.closest('.event');if(!event)return;const firstName=event.textContent.split('·')[1]?.trim();const assignment=assignments.find(a=>a.date===key&&a.project===event.dataset.project&&a.engineer.split(' ')[0]===firstName);if(assignment)openAssignment(assignment)})}render();
-    function openAssignment(assignment=null,date=fmt(activeDate)){editingAssignment=assignment;document.querySelector('#assignmentDialog h2').textContent=assignment?'Edit assignment':'Assign manpower';document.getElementById('deleteAssignment').hidden=!assignment;document.getElementById('project').innerHTML=Object.entries(projectFullNames).map(([key,name])=>'<option value="'+key+'">'+name+'</option>').join('');document.getElementById('engineer').innerHTML=engineers.map(([name])=>'<option>'+name+'</option>').join('');document.getElementById('project').value=assignment?assignment.project:selectedProject;document.getElementById('engineer').value=assignment?assignment.engineer:engineers[0][0];document.getElementById('assignmentDate').value=assignment?assignment.date:date;document.getElementById('hours').value=assignment?assignment.hours:8;document.getElementById('status').value=assignment?(assignment.status||'Confirmed'):'Confirmed';dialog.showModal()}
-    let nameEdit=null;function openNameEditor(type,key){nameEdit={type,key};const value=type==='project'?projectFullNames[key]:engineers.find(person=>person[0]===key)[0];document.getElementById('nameDialogTitle').textContent=type==='project'?'Rename project':'Rename manpower';document.getElementById('nameFieldLabel').firstChild.textContent=type==='project'?'Project name':'Manpower name';document.getElementById('nameInput').value=value;document.getElementById('nameDialog').showModal()}document.getElementById('nameForm').addEventListener('submit',e=>{if(e.submitter.id!=='saveName'||!nameEdit)return;const value=document.getElementById('nameInput').value.trim();if(!value)return;if(nameEdit.type==='project')projectFullNames[nameEdit.key]=value;else{const person=engineers.find(item=>item[0]===nameEdit.key);if(person){const oldName=person[0];person[0]=value;assignments.forEach(a=>{if(a.engineer===oldName)a.engineer=value})}}const activePage=document.querySelector('nav button.active').dataset.page;nameEdit=null;activePage==='calendar'?render():renderSecondary(activePage)});document.getElementById('projectList').addEventListener('dblclick',e=>{const project=e.target.closest('.project-item');if(project)openNameEditor('project',project.dataset.project)});document.getElementById('teamList').addEventListener('dblclick',e=>{const person=e.target.closest('.person');if(person)openNameEditor('manpower',person.dataset.engineer)});
-    document.getElementById('nameForm').addEventListener('submit',e=>{if(e.submitter.id==='saveName'&&nameEdit?.type==='project')projectNames[nameEdit.key]=document.getElementById('nameInput').value.trim()},{capture:true});
-    function renderProjectList(){const color={alpha:'a',beta:'b',gamma:'c',delta:'d'};document.getElementById('projectList').innerHTML=Object.keys(projectFullNames).map(key=>'<div class="project-row"><button class="project-item '+(key===selectedProject?'selected':'')+'" data-project="'+key+'"><span class="dot '+color[key]+'"></span>'+projectFullNames[key]+'</button><button class="name-edit" data-edit-project="'+key+'">Edit</button></div>').join('');document.querySelectorAll('.project-item').forEach(button=>button.onclick=()=>{selectedProject=button.dataset.project;renderProjectList()});document.querySelectorAll('[data-edit-project]').forEach(button=>button.onclick=()=>openNameEditor('project',button.dataset.editProject))}
-    function renderTeam(){const month=activeDate.getMonth(),year=activeDate.getFullYear(),used={};engineers.forEach(e=>used[e[0]]=0);assignments.forEach(a=>{const d=new Date(a.date+'T00:00');if(d.getMonth()===month&&d.getFullYear()===year)used[a.engineer]=(used[a.engineer]||0)+a.hours});document.getElementById('teamList').innerHTML=engineers.map(([name,ini,title])=>{const h=used[name]||0,p=Math.min(100,Math.round(h/96*100)),c=h>96?'over':p>85?'warn':'';return '<div class="person draggable" draggable="true" data-engineer="'+name+'"><div class="person-line"><div class="who"><span class="avatar">'+ini+'</span>'+name+'</div><button class="name-edit" data-edit-person="'+name+'">Edit</button><button class="name-edit" data-delete-person="'+name+'" style="color:#b42318">Delete</button><span class="drag-mark">↕ Drag</span></div><div class="bar"><span class="'+c+'" style="width:'+p+'%"></span></div><small>'+title+' · '+(h>96?'Over capacity':(96-h)+'h available')+'</small></div>'}).join('');document.querySelectorAll('.draggable').forEach(person=>{person.addEventListener('dragstart',e=>{if(e.target.closest('.name-edit')){e.preventDefault();return}person.classList.add('dragging');e.dataTransfer.setData('text/plain',person.dataset.engineer);e.dataTransfer.effectAllowed='copy'});person.addEventListener('dragend',()=>person.classList.remove('dragging'))});document.querySelectorAll('[data-edit-person]').forEach(button=>button.onclick=e=>{e.stopPropagation();openNameEditor('manpower',button.dataset.editPerson)});document.querySelectorAll('[data-delete-person]').forEach(button=>button.onclick=e=>{e.stopPropagation();const name=button.dataset.deletePerson;const linked=assignments.filter(a=>a.engineer===name).length;const message=linked?'Delete '+name+' and '+linked+' linked assignment'+(linked===1?'':'s')+'?':'Delete '+name+' from the manpower list?';if(!confirm(message))return;for(let i=assignments.length-1;i>=0;i--){if(assignments[i].engineer===name)assignments.splice(i,1)}const personIndex=engineers.findIndex(item=>item[0]===name);if(personIndex>=0)engineers.splice(personIndex,1);render()});document.getElementById('assignedCount').textContent=assignments.filter(a=>{const d=new Date(a.date+'T00:00');return d.getMonth()===month&&d.getFullYear()===year}).length+' shifts';document.getElementById('overloadCount').textContent=engineers.filter(e=>(used[e[0]]||0)>96).length+' people'}
-    function addDropEvents(cell,key){cell.dataset.assignmentDate=key;cell.addEventListener('dragover',e=>{e.preventDefault();cell.classList.add('drop-target')});cell.addEventListener('dragleave',()=>cell.classList.remove('drop-target'));cell.addEventListener('drop',e=>{e.preventDefault();cell.classList.remove('drop-target');const moved=e.dataTransfer.getData('application/x-calendar-assignment');if(moved){const data=JSON.parse(moved),assignment=assignments.find(a=>a.date===data.date&&a.project===data.project&&a.engineer===data.engineer);if(assignment){assignment.date=key;activeDate=new Date(key+'T00:00');render()}return}const engineer=e.dataTransfer.getData('text/plain');if(!engineer)return;openAssignment(null,key);document.getElementById('engineer').value=engineer;document.getElementById('project').value=selectedProject});cell.addEventListener('click',e=>{const event=e.target.closest('.event');if(!event)return;const firstName=event.textContent.split('·')[1]?.trim();const assignment=assignments.find(a=>a.date===key&&a.project===event.dataset.project&&a.engineer.split(' ')[0]===firstName);if(assignment)openAssignment(assignment)})}
-    const baseRenderSecondary=renderSecondary;renderSecondary=function(page){baseRenderSecondary(page);if(page==='projects')document.querySelectorAll('#secondaryContent tbody tr').forEach((row,index)=>{const button=document.createElement('button');button.className='name-edit';button.textContent='Edit';button.onclick=()=>openNameEditor('project',Object.keys(projectFullNames)[index]);row.cells[0].append(' ',button)});if(page==='manpower')document.querySelectorAll('#secondaryContent tbody tr').forEach((row,index)=>{const button=document.createElement('button');button.className='name-edit';button.textContent='Edit';button.onclick=()=>openNameEditor('manpower',engineers[index][0]);row.cells[0].append(' ',button)})};
-    const eventObserver=new MutationObserver(()=>days.querySelectorAll('.event').forEach(event=>{event.draggable=true}));eventObserver.observe(days,{childList:true,subtree:true});render();days.addEventListener('dragstart',e=>{const event=e.target.closest('.event');if(!event)return;const cell=event.closest('.day'),firstName=event.textContent.split('·')[1]?.trim(),assignment=assignments.find(a=>a.date===cell.dataset.assignmentDate&&a.project===event.dataset.project&&a.engineer.split(' ')[0]===firstName);if(assignment){e.dataTransfer.setData('application/x-calendar-assignment',JSON.stringify({date:assignment.date,project:assignment.project,engineer:assignment.engineer}));e.dataTransfer.effectAllowed='move'}});
-    const titleCase=value=>value.trim().replace(/\b\p{L}/gu,letter=>letter.toUpperCase());document.getElementById('nameForm').addEventListener('submit',e=>{if(e.submitter.id!=='saveName'||!nameEdit)return;e.preventDefault();e.stopImmediatePropagation();const value=titleCase(document.getElementById('nameInput').value);if(!value)return;if(nameEdit.type==='project'){projectFullNames[nameEdit.key]=value;projectNames[nameEdit.key]=value}else{const person=engineers.find(item=>item[0]===nameEdit.key);if(person){const oldName=person[0];person[0]=value;assignments.forEach(a=>{if(a.engineer===oldName)a.engineer=value})}}const activePage=document.querySelector('nav button.active').dataset.page;nameEdit=null;document.getElementById('nameDialog').close();activePage==='calendar'?render():renderSecondary(activePage)},{capture:true});let createType='project';function openCreate(type){createType=type;document.getElementById('createTitle').textContent=type==='project'?'Add project':'Add manpower';document.getElementById('createNameLabel').firstChild.textContent=type==='project'?'Project name':'Manpower name';document.getElementById('createRoleLabel').hidden=type==='project';document.getElementById('createName').value='';document.getElementById('createDialog').showModal()}document.getElementById('addProject').onclick=()=>openCreate('project');document.getElementById('addManpower').onclick=()=>openCreate('manpower');document.getElementById('createForm').addEventListener('submit',e=>{if(e.submitter.id!=='saveCreate')return;const name=titleCase(document.getElementById('createName').value);if(!name)return;if(createType==='project'){const key='custom'+Date.now();projectFullNames[key]=name;projectNames[key]=name;selectedProject=key}else{const initials=name.split(' ').map(word=>word[0]).join('').slice(0,2).toUpperCase();engineers.push([name,initials,document.getElementById('createRole').value])}document.getElementById('createDialog').close();render()});
-    document.getElementById('createForm').addEventListener('submit',e=>{if(e.submitter.id!=='saveCreate')return;e.preventDefault();e.stopImmediatePropagation();const name=titleCase(document.getElementById('createName').value);if(!name)return;if(createType==='project'){const key='custom'+Date.now();projectFullNames[key]=name;projectNames[key]=name;selectedProject=key}else{const initials=name.split(' ').map(word=>word[0]).join('').slice(0,2).toUpperCase();engineers.push([name,initials,document.getElementById('createRole').value])}document.getElementById('createDialog').close();const activePage=document.querySelector('nav button.active').dataset.page;activePage==='calendar'?render():renderSecondary(activePage)},{capture:true});
-    const secondaryObserver=new MutationObserver(()=>{const page=document.querySelector('nav button.active')?.dataset.page,card=document.querySelector('#secondaryContent .data-card');if((page==='projects'||page==='manpower')&&card&&!card.querySelector('[data-tab-add]')){const button=document.createElement('button');button.className='name-edit';button.dataset.tabAdd='true';button.textContent=page==='projects'?'+ Add project':'+ Add manpower';button.onclick=()=>openCreate(page==='projects'?'project':'manpower');card.querySelector('h2').append(' ',button)}});secondaryObserver.observe(document.getElementById('secondaryContent'),{childList:true,subtree:true});
-    function renderDay(){const key=fmt(activeDate),allItems=assignments.filter(a=>a.date===key),items=allItems.filter(a=>(dailyProjectFilter==='all'||a.project===dailyProjectFilter)&&(dailyEngineerFilter==='all'||a.engineer===dailyEngineerFilter)).slice();if(dailySort==='engineer')items.sort((a,b)=>a.engineer.localeCompare(b.engineer));if(dailySort==='status')items.sort((a,b)=>(a.status||'Confirmed').localeCompare(b.status||'Confirmed'));if(dailySort==='project')items.sort((a,b)=>projectFullNames[a.project].localeCompare(projectFullNames[b.project]));const hours=items.reduce((total,a)=>total+a.hours,0),people=new Set(items.map(a=>a.engineer)).size;document.getElementById('monthLabel').textContent=activeDate.toLocaleDateString('en',{weekday:'long',day:'numeric',month:'long',year:'numeric'});days.className='days daily';const projectOptions='<option value="all">All Projects</option>'+Object.entries(projectFullNames).map(([key,name])=>'<option value="'+key+'" '+(dailyProjectFilter===key?'selected':'')+'>'+name+'</option>').join(''),personOptions='<option value="all">All Manpower</option>'+engineers.map(([name])=>'<option value="'+name+'" '+(dailyEngineerFilter===name?'selected':'')+'>'+name+'</option>').join(''),controls='<div class="daily-controls"><select id="dailyProject" aria-label="Filter By Project">'+projectOptions+'</select><select id="dailyEngineer" aria-label="Filter By Manpower">'+personOptions+'</select><select id="dailySort" aria-label="Sort Daily Plan"><option value="time" '+(dailySort==='time'?'selected':'')+'>Sort: Time</option><option value="project" '+(dailySort==='project'?'selected':'')+'>Sort: Project</option><option value="engineer" '+(dailySort==='engineer'?'selected':'')+'>Sort: Manpower</option><option value="status" '+(dailySort==='status'?'selected':'')+'>Sort: Status</option></select></div>';if(!items.length){days.innerHTML='<div class="daily-head"><h3>Daily Work Plan</h3></div>'+controls+'<div class="empty-day"><strong>No Matching Assignments</strong>Adjust The Filters Or Drag Manpower Here To Add An Assignment.</div>';bindDailyControls();addDropEvents(days,key);return}const color={alpha:'a',beta:'b',gamma:'c',delta:'d'},groups=items.reduce((result,item)=>{(result[item.project]||(result[item.project]=[])).push(item);return result},{});days.innerHTML='<div class="daily-head"><h3>Daily Work Plan</h3><div class="daily-stats"><span class="daily-stat"><b>'+items.length+'</b> Assignments</span><span class="daily-stat"><b>'+people+'</b> Manpower</span><span class="daily-stat"><b>'+hours+'h</b> Booked</span></div></div>'+controls+Object.entries(groups).map(([project,members])=>{const groupHours=members.reduce((total,item)=>total+item.hours,0);return '<div class="project-balloon"><div class="balloon-head"><span class="schedule-project"><i class="dot '+(color[project]||'')+'"></i>'+projectFullNames[project]+'</span><span class="balloon-meta">'+members.length+' Manpower · '+groupHours+'h</span></div><div class="schedule">'+members.map((item,index)=>'<div class="schedule-row" data-assignment-index="'+assignments.indexOf(item)+'"><span>'+String(8+members.slice(0,index).reduce((total,row)=>total+row.hours,0)).padStart(2,'0')+':00</span><span>'+projectFullNames[project]+'</span><span>'+item.engineer+'</span><span>'+item.hours+'h</span><span class="status '+(item.status||'Confirmed').toLowerCase()+'">'+(item.status||'Confirmed')+'</span></div>').join('')+'</div></div>'}).join('');bindDailyControls();addDropEvents(days,key)}
-    days.addEventListener('click',e=>{const indexed=e.target.closest('[data-assignment-index]');if(indexed){e.stopImmediatePropagation();openAssignment(assignments[Number(indexed.dataset.assignmentIndex)]);return}const row=e.target.closest('.schedule-row:not(.header)');if(!row)return;const cells=row.querySelectorAll('span');if(cells.length<5)return;const project=cells[1].textContent.trim(),person=cells[2].textContent.trim();const assignment=assignments.find(a=>a.date===fmt(activeDate)&&projectFullNames[a.project]===project&&a.engineer===person);if(assignment)openAssignment(assignment)});
-    const capitaliseTypedWords=value=>value.replace(/(^|[\s-])(\p{L})/gu,(match,prefix,letter)=>prefix+letter.toUpperCase());['nameInput','createName'].forEach(id=>document.getElementById(id).addEventListener('input',e=>{const cursor=e.target.selectionStart;e.target.value=capitaliseTypedWords(e.target.value);e.target.setSelectionRange(cursor,cursor)}));
-    days.addEventListener('click',e=>{const indexed=e.target.closest('[data-assignment-index]');if(!indexed)return;e.stopImmediatePropagation();openAssignment(assignments[Number(indexed.dataset.assignmentIndex)])},true);
-    function addDropEvents(cell,key){cell.dataset.assignmentDate=key;cell.addEventListener('dragover',e=>{e.preventDefault();cell.classList.add('drop-target')});cell.addEventListener('dragleave',()=>cell.classList.remove('drop-target'));cell.addEventListener('drop',e=>{e.preventDefault();cell.classList.remove('drop-target');const moved=e.dataTransfer.getData('application/x-calendar-assignment');if(moved){const data=JSON.parse(moved);if(data.group){assignments.filter(a=>a.date===data.date&&a.project===data.project).forEach(a=>a.date=key)}else{const assignment=assignments.find(a=>a.date===data.date&&a.project===data.project&&a.engineer===data.engineer);if(assignment)assignment.date=key}activeDate=new Date(key+'T00:00');render();return}const engineer=e.dataTransfer.getData('text/plain');if(!engineer)return;openAssignment(null,key);document.getElementById('engineer').value=engineer;document.getElementById('project').value=selectedProject});cell.addEventListener('click',e=>{const event=e.target.closest('.event');if(!event||event.dataset.grouped)return;const firstName=event.textContent.split('·')[1]?.trim(),assignment=assignments.find(a=>a.date===key&&a.project===event.dataset.project&&a.engineer.split(' ')[0]===firstName);if(assignment)openAssignment(assignment)})}
-    function groupMonthlyAssignments(){if(viewMode!=='month')return;days.querySelectorAll('.day').forEach(cell=>{const events=[...cell.querySelectorAll('.event')],groups={};events.forEach(event=>{(groups[event.dataset.project]||(groups[event.dataset.project]=[])).push(event)});Object.entries(groups).forEach(([project,items])=>{if(items.length<2)return;const group=items[0],names=items.map(item=>item.textContent.split('·')[1]?.trim()).filter(Boolean);group.dataset.grouped='true';group.dataset.groupCount=items.length;group.innerHTML=projectNames[project]+' <small>· '+items.length+' Manpower</small>';group.title=projectFullNames[project]+' · '+names.join(', ');items.slice(1).forEach(item=>item.remove());group.addEventListener('click',e=>{e.stopPropagation();activeDate=new Date(cell.dataset.assignmentDate+'T00:00');viewMode='day';render()})})})}
-    const baseRender=render;render=function(){baseRender();groupMonthlyAssignments()};days.addEventListener('dragstart',e=>{const event=e.target.closest('.event');if(!event?.dataset.grouped)return;e.stopImmediatePropagation();e.dataTransfer.setData('application/x-calendar-assignment',JSON.stringify({date:event.closest('.day').dataset.assignmentDate,project:event.dataset.project,group:true}));e.dataTransfer.effectAllowed='move'},true);render();
-    function enableMonthDateKeys(){if(viewMode!=='month')return;days.querySelectorAll('.day .date').forEach(date=>{if(date.dataset.keyboardReady)return;date.dataset.keyboardReady='true';date.tabIndex=0;date.setAttribute('role','button');date.setAttribute('aria-label','Open Daily Plan For '+date.closest('.day').dataset.assignmentDate);date.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;e.preventDefault();activeDate=new Date(date.closest('.day').dataset.assignmentDate+'T00:00');viewMode='day';render()})})}const groupedRender=render;render=function(){groupedRender();enableMonthDateKeys()};['assignmentForm','nameForm','createForm'].forEach(formId=>document.getElementById(formId).addEventListener('keydown',e=>{if(e.key!=='Enter'||e.target.tagName==='SELECT')return;e.preventDefault();const form=e.currentTarget,submit=form.querySelector('.primary');form.requestSubmit(submit)}));render();
-    function openAssignment(assignment=null,date=fmt(activeDate)){editingAssignment=assignment;document.querySelector('#assignmentDialog h2').textContent=assignment?'Edit Assignment':'Assign Manpower';document.getElementById('deleteAssignment').hidden=!assignment;document.getElementById('project').innerHTML=Object.entries(projectFullNames).map(([key,name])=>'<option value="'+key+'">'+name+'</option>').join('');document.getElementById('engineer').innerHTML=engineers.map(([name])=>'<option>'+name+'</option>').join('');document.getElementById('project').value=assignment?assignment.project:selectedProject;document.getElementById('engineer').value=assignment?assignment.engineer:engineers[0][0];document.getElementById('assignmentDate').value=assignment?assignment.date:date;document.getElementById('endDate').value=assignment?assignment.date:date;document.getElementById('hours').value=assignment?assignment.hours:8;document.getElementById('status').value=assignment?(assignment.status||'Confirmed'):'Confirmed';dialog.showModal()}
-    document.getElementById('assignmentForm').addEventListener('submit',e=>{if(e.submitter.id!=='saveAssignment')return;e.preventDefault();e.stopImmediatePropagation();const start=document.getElementById('assignmentDate').value,end=document.getElementById('endDate').value;if(end<start){document.getElementById('endDate').setCustomValidity('End Date Must Be On Or After The Start Date');document.getElementById('endDate').reportValidity();return}document.getElementById('endDate').setCustomValidity('');const value={project:document.getElementById('project').value,engineer:document.getElementById('engineer').value,hours:Number(document.getElementById('hours').value),status:document.getElementById('status').value};if(editingAssignment){Object.assign(editingAssignment,{...value,date:start})}else{let date=new Date(start+'T00:00'),last=new Date(end+'T00:00');while(date<=last){assignments.push({...value,date:fmt(date)});date.setDate(date.getDate()+1)}}activeDate=new Date(start+'T00:00');editingAssignment=null;dialog.close();render()},{capture:true});
-    let activeTeam='project';const teamOf=name=>(engineers.find(person=>person[0]===name)||[])[3];function applyTeamCalendar(){const teamName=activeTeam==='project'?'Project Team':'Service Team';document.querySelectorAll('[data-team]').forEach(button=>button.classList.toggle('active',button.dataset.team===activeTeam));document.getElementById('pageTitle').textContent=teamName+' Calendar';document.getElementById('pageSub').textContent=activeTeam==='project'?'Project manpower assignments and capacity':'Service manpower assignments and capacity';document.querySelectorAll('#teamList .person').forEach(person=>person.hidden=teamOf(person.dataset.engineer)!==activeTeam);if(viewMode==='month'){days.querySelectorAll('.day').forEach(cell=>{const date=cell.dataset.assignmentDate;cell.querySelectorAll('.event').forEach(event=>{const matching=assignments.filter(a=>a.date===date&&a.project===event.dataset.project&&teamOf(a.engineer)===activeTeam);event.hidden=!matching.length;if(!matching.length)return;event.innerHTML=projectNames[event.dataset.project]+' <small>· '+(matching.length>1?matching.length+' Manpower':matching[0].engineer.split(' ')[0])+'</small>';event.dataset.grouped=matching.length>1?'true':''})})}else{const visible=assignments.filter(a=>a.date===fmt(activeDate)&&teamOf(a.engineer)===activeTeam),hours=visible.reduce((total,a)=>total+a.hours,0),people=new Set(visible.map(a=>a.engineer)).size;days.querySelectorAll('[data-assignment-index]').forEach(row=>row.hidden=teamOf(assignments[Number(row.dataset.assignmentIndex)].engineer)!==activeTeam);days.querySelectorAll('.project-balloon').forEach(balloon=>{const rows=[...balloon.querySelectorAll('[data-assignment-index]')].filter(row=>!row.hidden),meta=balloon.querySelector('.balloon-meta');balloon.hidden=!rows.length;if(rows.length&&meta){const groupHours=rows.reduce((total,row)=>total+assignments[Number(row.dataset.assignmentIndex)].hours,0);meta.textContent=rows.length+' Manpower · '+groupHours+'h'}});const stats=days.querySelectorAll('.daily-stat b');if(stats.length){stats[0].textContent=visible.length;stats[1].textContent=people;stats[2].textContent=hours+'h'}}}const calendarRender=render;render=function(){calendarRender();applyTeamCalendar()};function openAssignment(assignment=null,date=fmt(activeDate)){editingAssignment=assignment;document.querySelector('#assignmentDialog h2').textContent=assignment?'Edit Assignment':'Assign Manpower';document.getElementById('deleteAssignment').hidden=!assignment;document.getElementById('project').innerHTML=Object.entries(projectFullNames).map(([key,name])=>'<option value="'+key+'">'+name+'</option>').join('');const available=engineers.filter(person=>person[3]===activeTeam);document.getElementById('engineer').innerHTML=available.map(([name])=>'<option>'+name+'</option>').join('');document.getElementById('project').value=assignment?assignment.project:selectedProject;document.getElementById('engineer').value=assignment?assignment.engineer:available[0][0];document.getElementById('assignmentDate').value=assignment?assignment.date:date;document.getElementById('endDate').value=assignment?assignment.date:date;document.getElementById('hours').value=assignment?assignment.hours:8;document.getElementById('status').value=assignment?(assignment.status||'Confirmed'):'Confirmed';dialog.showModal()}document.querySelectorAll('[data-team]').forEach(button=>button.onclick=()=>{activeTeam=button.dataset.team;render()});render();
-    function openCreate(type){createType=type;document.getElementById('createTitle').textContent=type==='project'?'Add Project':'Add Manpower';document.getElementById('createNameLabel').firstChild.textContent=type==='project'?'Project Name':'Manpower Name';document.getElementById('createRoleLabel').hidden=type==='project';document.getElementById('createTeamLabel').hidden=type==='project';document.getElementById('createTeam').value=activeTeam;document.getElementById('createName').value='';document.getElementById('createDialog').showModal()}const oldCreateForm=document.getElementById('createForm'),newCreateForm=oldCreateForm.cloneNode(true);oldCreateForm.replaceWith(newCreateForm);document.getElementById('createName').addEventListener('input',e=>{const cursor=e.target.selectionStart;e.target.value=capitaliseTypedWords(e.target.value);e.target.setSelectionRange(cursor,cursor)});newCreateForm.addEventListener('submit',e=>{if(e.submitter.id!=='saveCreate')return;e.preventDefault();const name=titleCase(document.getElementById('createName').value);if(!name)return;if(createType==='project'){const key='custom'+Date.now();projectFullNames[key]=name;projectNames[key]=name;selectedProject=key}else{const initials=name.split(' ').map(word=>word[0]).join('').slice(0,2).toUpperCase();engineers.push([name,initials,document.getElementById('createRole').value,document.getElementById('createTeam').value])}document.getElementById('createDialog').close();render()});newCreateForm.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName!=='SELECT'){e.preventDefault();newCreateForm.requestSubmit(newCreateForm.querySelector('.primary'))}});
-  </script>
 
-  <!-- Firebase compatibility SDK: shared online saving -->
+  <dialog id="assignmentDialog">
+    <form id="assignmentForm" class="modal">
+      <h2 id="assignmentTitle">New Assignment</h2>
+      <input type="hidden" id="assignmentId">
+      <label>Project<select id="assignmentProject" required></select></label>
+      <label>Manpower<select id="assignmentEmployee" required></select></label>
+      <div class="form-grid">
+        <label>Start date<input id="assignmentStart" type="date" required></label>
+        <label>End date<input id="assignmentEnd" type="date" required></label>
+      </div>
+      <div class="form-grid">
+        <label>Hours per day<input id="assignmentHours" type="number" min="1" max="24" value="8" required></label>
+        <label>Status<select id="assignmentStatus"><option>Confirmed</option><option>Pending</option></select></label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn danger" id="deleteAssignmentBtn" hidden>Delete</button>
+        <span></span>
+        <button type="button" class="btn" data-close="assignmentDialog">Cancel</button>
+        <button class="btn primary" type="submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="employeeDialog">
+    <form id="employeeForm" class="modal">
+      <h2 id="employeeTitle">Add Manpower</h2>
+      <input type="hidden" id="employeeId">
+      <label>Name<input id="employeeName" required></label>
+      <div class="form-grid">
+        <label>Position<input id="employeePosition" required></label>
+        <label>Team<select id="employeeTeam"><option value="project">Project</option><option value="service">Service</option></select></label>
+      </div>
+      <div class="form-grid">
+        <label>Country<input id="employeeCountry"></label>
+        <label>Department<input id="employeeDepartment"></label>
+      </div>
+      <label>Company<input id="employeeCompany"></label>
+      <div class="modal-actions">
+        <span></span><span></span>
+        <button type="button" class="btn" data-close="employeeDialog">Cancel</button>
+        <button class="btn primary" type="submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="projectDialog">
+    <form id="projectForm" class="modal">
+      <h2>Add Project</h2>
+      <label>Project name<input id="projectName" required></label>
+      <div class="modal-actions">
+        <span></span><span></span>
+        <button type="button" class="btn" data-close="projectDialog">Cancel</button>
+        <button class="btn primary" type="submit">Add</button>
+      </div>
+    </form>
+  </dialog>
+
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-
-  <script>
-  (function () {
-    const status = document.createElement("div");
-    Object.assign(status.style, {
-      position: "fixed",
-      right: "18px",
-      bottom: "18px",
-      zIndex: "9999",
-      maxWidth: "480px",
-      padding: "9px 13px",
-      borderRadius: "8px",
-      background: "#172a58",
-      color: "#fff",
-      font: "600 12px/1.35 system-ui, sans-serif",
-      boxShadow: "0 8px 24px rgba(0,0,0,.18)"
-    });
-    status.textContent = "Firebase: loading SDK…";
-    document.body.appendChild(status);
-
-    function show(message, failed) {
-      status.textContent = message;
-      status.style.background = failed ? "#b42318" : "#172a58";
-      if (failed) console.error(message);
-    }
-
-    function toObjectMap(items, prefix, mapper) {
-      const result = {};
-      items.forEach(function (item, index) {
-        result[prefix + String(index).padStart(5, "0")] = mapper(item, index);
-      });
-      return result;
-    }
-
-    function orderedValues(map) {
-      if (!map || typeof map !== "object") return [];
-      return Object.keys(map).sort().map(function (key) {
-        return map[key];
-      });
-    }
-
-    const masterEmployeeSeed = [{"name": "Muhammad Ariff Bin A'zan", "initials": "MA", "title": "Project Engineer", "team": "project"}, {"name": "Lim Aik Chan", "initials": "LA", "title": "Project Engineer", "team": "project"}, {"name": "Nur Nadzirah Syahirah Abdul Mudtalib", "initials": "NN", "title": "Project Administrative", "team": "service"}, {"name": "Mohamad Arif Haikal Bin Khyar", "initials": "MA", "title": "Project Supervisor", "team": "project"}, {"name": "Mohammad Amirul Hizam Bin Alias", "initials": "MA", "title": "Service Technician", "team": "service"}, {"name": "Mohd Hizani Bin A’zan", "initials": "MH", "title": "Service Technician", "team": "service"}, {"name": "Muhammad Fariesh Afhan Bin Mohd Fadil", "initials": "MF", "title": "Service Technician", "team": "service"}, {"name": "Muhammad Aiman Daniel Bin Mohd Asri", "initials": "MA", "title": "Service Technician", "team": "service"}, {"name": "Muhamad Amir Faisal Bin Tajudin", "initials": "MA", "title": "Service Technician", "team": "service"}, {"name": "Muhammad Zulfakhrul Aiman Bin Mohd Roslan", "initials": "MZ", "title": "Service Technician", "team": "service"}, {"name": "Tayalan A/L Chandrasekaran", "initials": "TA", "title": "Service Technician", "team": "service"}, {"name": "Ong Yee Soon", "initials": "OY", "title": "Commissioning Technician", "team": "project"}, {"name": "Mohd Yazid Bin Mohd Shah", "initials": "MY", "title": "Project Engineer", "team": "project"}, {"name": "Amir Hafiz Bin Zubir", "initials": "AH", "title": "Project Engineer", "team": "project"}, {"name": "Asif", "initials": "A", "title": "General Worker", "team": "project"}, {"name": "Abdullah", "initials": "A", "title": "General Worker", "team": "project"}, {"name": "Masum", "initials": "M", "title": "General Worker", "team": "project"}, {"name": "Mansor", "initials": "M", "title": "General Worker", "team": "project"}, {"name": "Sulaiman", "initials": "S", "title": "General Worker", "team": "project"}, {"name": "Mohamad Akmal Bin Mohd Shah", "initials": "MA", "title": "Project Supervisor", "team": "project"}, {"name": "Muhammad Daniel Bin Zamzaidi", "initials": "MD", "title": "Project Supervisor", "team": "project"}, {"name": "Muhammad Khairul Hafiz Bin Md Rejulin", "initials": "MK", "title": "Project Supervisor", "team": "project"}, {"name": "Muhamad Saiful Edzwan Bin Mohd Khairol", "initials": "MS", "title": "Commissioning Technician", "team": "project"}, {"name": "Moslam", "initials": "M", "title": "General Worker", "team": "project"}, {"name": "Ashfaq", "initials": "A", "title": "General Worker", "team": "project"}, {"name": "Deriansyah Wengkang", "initials": "DW", "title": "Project Engineer", "team": "project"}, {"name": "Slamet", "initials": "S", "title": "Project Supervisor", "team": "project"}, {"name": "Yehezkiel Silaban", "initials": "YS", "title": "Project Supervisor", "team": "project"}, {"name": "Frans Neo Nisa", "initials": "FN", "title": "General Worker", "team": "project"}, {"name": "M Bintang", "initials": "MB", "title": "General Worker", "team": "project"}, {"name": "Dedy S", "initials": "DS", "title": "Service Engineer", "team": "service"}, {"name": "Bima", "initials": "B", "title": "Service Administrative", "team": "service"}, {"name": "Service Technician", "initials": "ST", "title": "Service Technician", "team": "service"}, {"name": "Very", "initials": "V", "title": "Service Technician", "team": "service"}, {"name": "Fajar", "initials": "F", "title": "Service Technician", "team": "service"}, {"name": "Suprihatin", "initials": "S", "title": "Service Technician", "team": "service"}, {"name": "Gosen Manalu", "initials": "GM", "title": "Service Technician", "team": "service"}, {"name": "Raju", "initials": "R", "title": "Service Technician", "team": "service"}, {"name": "Tapani Kalervo Heininen", "initials": "TK", "title": "Project Supervisor", "team": "project"}, {"name": "Xu Bin", "initials": "XB", "title": "Project Supervisor", "team": "project"}, {"name": "Mika Oksanen", "initials": "MO", "title": "Commissioning Technician", "team": "project"}, {"name": "Surit Apiwan", "initials": "SA", "title": "Project Engineer", "team": "project"}, {"name": "Arunee Wichittkul (Pum)", "initials": "AW", "title": "Project Administrative", "team": "project"}, {"name": "Teerayut Dantes (Noom)", "initials": "TD", "title": "General Worker", "team": "project"}, {"name": "Nattachai Singdee (Nat)", "initials": "NS", "title": "General Worker", "team": "project"}, {"name": "Bunyang Phansawang (Yang)", "initials": "BP", "title": "General Worker", "team": "project"}, {"name": "Visittisak Saengjun (View)", "initials": "VS", "title": "General Worker", "team": "project"}, {"name": "Tawep Wannaow (Tawep)", "initials": "TW", "title": "General Worker", "team": "project"}];
-
-    function mergeMasterEmployees() {
-      const existingNames = new Set(
-        engineers.map(function (person) {
-          return String(person[0] || "").trim().toLowerCase();
-        })
-      );
-
-      masterEmployeeSeed.forEach(function (person) {
-        const key = person.name.trim().toLowerCase();
-        if (!existingNames.has(key)) {
-          engineers.push([
-            person.name,
-            person.initials,
-            person.title,
-            person.team
-          ]);
-          existingNames.add(key);
-        }
-      });
-    }
-
-    function getPlannerState() {
-      return {
-        version: 6,
-        projects: Object.assign({}, projectFullNames),
-        projectShortNames: Object.assign({}, projectNames),
-
-        // Store as maps, not arrays, to eliminate nested-array errors.
-        engineersMap: toObjectMap(engineers, "person_", function (person) {
-          return {
-            name: person[0] || "",
-            initials: person[1] || "",
-            title: person[2] || "",
-            team: person[3] || "project"
-          };
-        }),
-
-        assignmentsMap: toObjectMap(assignments, "assignment_", function (item) {
-          return {
-            date: item.date || "",
-            project: item.project || "",
-            engineer: item.engineer || "",
-            hours: Number(item.hours || 0),
-            status: item.status || "Confirmed"
-          };
-        })
-      };
-    }
-
-    function applyPlannerState(data) {
-      if (!data) return;
-
-      if (data.projects && typeof data.projects === "object") {
-        Object.keys(projectFullNames).forEach(function (key) {
-          delete projectFullNames[key];
-        });
-        Object.assign(projectFullNames, data.projects);
-      }
-
-      if (data.projectShortNames && typeof data.projectShortNames === "object") {
-        Object.keys(projectNames).forEach(function (key) {
-          delete projectNames[key];
-        });
-        Object.assign(projectNames, data.projectShortNames);
-      } else if (data.projects) {
-        Object.keys(projectNames).forEach(function (key) {
-          delete projectNames[key];
-        });
-        Object.assign(projectNames, data.projects);
-      }
-
-      let incomingEngineers = [];
-
-      if (data.engineersMap && typeof data.engineersMap === "object") {
-        incomingEngineers = orderedValues(data.engineersMap);
-      } else if (Array.isArray(data.engineers)) {
-        incomingEngineers = data.engineers;
-      }
-
-      if (incomingEngineers.length) {
-        const converted = incomingEngineers.map(function (person) {
-          if (Array.isArray(person)) {
-            return [
-              person[0] || "",
-              person[1] || "",
-              person[2] || "",
-              person[3] || "project"
-            ];
-          }
-
-          return [
-            (person && person.name) || "",
-            (person && person.initials) || "",
-            (person && person.title) || "",
-            (person && person.team) || "project"
-          ];
-        });
-
-        engineers.splice.apply(
-          engineers,
-          [0, engineers.length].concat(converted)
-        );
-      }
-
-      let incomingAssignments = [];
-
-      if (data.assignmentsMap && typeof data.assignmentsMap === "object") {
-        incomingAssignments = orderedValues(data.assignmentsMap);
-      } else if (Array.isArray(data.assignments)) {
-        incomingAssignments = data.assignments;
-      }
-
-      if (incomingAssignments.length || data.assignmentsMap) {
-        const convertedAssignments = incomingAssignments.map(function (item) {
-          return {
-            date: (item && item.date) || "",
-            project: (item && item.project) || "",
-            engineer: (item && item.engineer) || "",
-            hours: Number((item && item.hours) || 0),
-            status: (item && item.status) || "Confirmed"
-          };
-        });
-
-        assignments.splice.apply(
-          assignments,
-          [0, assignments.length].concat(convertedAssignments)
-        );
-      }
-
-      mergeMasterEmployees();
-
-      if (!projectFullNames[selectedProject]) {
-        selectedProject = Object.keys(projectFullNames)[0] || "";
-      }
-
-      const activePage =
-        document.querySelector("nav button.active")?.dataset.page || "calendar";
-
-      if (activePage === "calendar") render();
-      else renderSecondary(activePage);
-    }
-
-    mergeMasterEmployees();
-
-    try {
-      show("Firebase: initializing app…");
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyB2BiCD0Va9TxY9KYtCEh8o4oV5PMiayYU",
-        authDomain: "team-planner-3b86d.firebaseapp.com",
-        projectId: "team-planner-3b86d",
-        storageBucket: "team-planner-3b86d.firebasestorage.app",
-        messagingSenderId: "984036405194",
-        appId: "1:984036405194:web:3ce489ab14e808df726933"
-      };
-
-      if (!window.firebase || !firebase.initializeApp) {
-        throw new Error("Firebase SDK did not load.");
-      }
-
-      if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-      }
-
-      show("Firebase: connecting to Firestore…");
-
-      const db = firebase.firestore();
-      db.settings({ ignoreUndefinedProperties: true });
-
-      const plannerRef = db.collection("planner").doc("shared");
-
-      let applyingRemote = false;
-      let lastState = "";
-      let saveTimer = null;
-
-      function serializedState(state) {
-        return JSON.stringify({
-          version: state.version || 6,
-          projects: state.projects || {},
-          projectShortNames: state.projectShortNames || {},
-          engineersMap: state.engineersMap || {},
-          assignmentsMap: state.assignmentsMap || {}
-        });
-      }
-
-      async function saveNow() {
-        if (applyingRemote) return;
-
-        const state = getPlannerState();
-        const serialized = serializedState(state);
-
-        if (serialized === lastState) return;
-
-        show("Firebase: saving online…");
-
-        // overwrite removes old array fields from earlier versions
-        await plannerRef.set(
-          Object.assign({}, state, {
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-          }),
-          { merge: false }
-        );
-
-        lastState = serialized;
-        show("Firebase: saved online");
-      }
-
-      show("Firebase: reading shared planner…");
-
-      plannerRef.get()
-        .then(function (snapshot) {
-          if (snapshot.exists) {
-            applyingRemote = true;
-            applyPlannerState(snapshot.data());
-            applyingRemote = false;
-
-            // Immediately migrate any older document to the map format.
-            return saveNow();
-          }
-
-          return saveNow();
-        })
-        .then(function () {
-          lastState = serializedState(getPlannerState());
-
-          plannerRef.onSnapshot(
-            function (snapshot) {
-              if (!snapshot.exists) return;
-
-              const incoming = snapshot.data();
-
-              const normalized = {
-                version: incoming.version || 6,
-                projects: incoming.projects || {},
-                projectShortNames: incoming.projectShortNames || {},
-                engineersMap: incoming.engineersMap || {},
-                assignmentsMap: incoming.assignmentsMap || {}
-              };
-
-              const serialized = serializedState(normalized);
-
-              if (serialized === lastState) return;
-
-              applyingRemote = true;
-              applyPlannerState(incoming);
-              lastState = serializedState(getPlannerState());
-              applyingRemote = false;
-              show("Firebase: updated online");
-            },
-            function (error) {
-              console.error("Firestore listener error:", error);
-              show(
-                "Firebase listener failed: " +
-                (error.code || "") + " " + (error.message || error),
-                true
-              );
-            }
-          );
-
-          setInterval(function () {
-            if (applyingRemote) return;
-
-            const serialized = serializedState(getPlannerState());
-            if (serialized === lastState) return;
-
-            clearTimeout(saveTimer);
-            saveTimer = setTimeout(function () {
-              saveNow().catch(function (error) {
-                console.error("Firestore save error:", error);
-                show(
-                  "Firebase save failed: " +
-                  (error.code || "") + " " + (error.message || error),
-                  true
-                );
-              });
-            }, 350);
-          }, 500);
-
-          show("Firebase: saved online");
-        })
-        .catch(function (error) {
-          console.error("Firestore startup error:", error);
-          show(
-            "Firebase read failed: " +
-            (error.code || "") + " " + (error.message || error),
-            true
-          );
-        });
-
-    } catch (error) {
-      console.error("Firebase startup error:", error);
-      show(
-        "Firebase startup failed: " +
-        (error.code || "") + " " + (error.message || error),
-        true
-      );
-    }
-  })();
-  </script>
-
+  <script src="seed-employees.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
