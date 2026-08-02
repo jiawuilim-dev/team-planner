@@ -57,17 +57,48 @@
 .daily-card .row-actions .small-btn{min-width:38px}
 .project-card header{align-items:flex-start}
 
+
+.login-screen{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#172a58,#294784)}
+.login-card{width:min(420px,100%);background:#fff;border-radius:16px;padding:28px;box-shadow:0 28px 80px rgba(8,18,45,.3);display:grid;gap:15px}
+.login-brand{font-size:22px;font-weight:900;color:#172a58}.login-brand span{color:#3567f2}.login-brand small{font-size:10px;margin-left:7px;color:#687086}
+.login-card h1{font-size:26px;margin-top:5px}.login-card p{color:var(--muted);margin-top:-8px}
+.login-card label{display:grid;gap:7px;font-size:12px;font-weight:800;color:#4d566c}
+.login-submit{width:100%;margin-top:4px}.login-message{min-height:20px;color:var(--red);font-size:12px;font-weight:700}
+.sync-info{display:grid;gap:3px;min-width:0}.sync-info small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.logout-btn{border:0;background:transparent;color:#c6d2ee;padding:4px 0;text-align:left;font-weight:700;cursor:pointer;font-size:12px}
+.logout-btn:hover{color:#fff}
+
 </style>
 </head>
 <body>
-  <div class="app-shell">
+  <section id="loginScreen" class="login-screen">
+    <form id="loginForm" class="login-card">
+      <div class="login-brand">field<span>flow</span><small>V2</small></div>
+      <h1>Team Planner Login</h1>
+      <p>Sign in with your registered company email.</p>
+      <label>Email
+        <input id="loginEmail" type="email" autocomplete="username" required>
+      </label>
+      <label>Password
+        <input id="loginPassword" type="password" autocomplete="current-password" required>
+      </label>
+      <button class="btn primary login-submit" type="submit">Sign In</button>
+      <div id="loginMessage" class="login-message"></div>
+    </form>
+  </section>
+
+  <div class="app-shell" id="plannerApp" hidden>
     <aside class="sidebar">
       <div class="brand">field<span>flow</span><small>V2</small></div>
       <div class="sidebar-label">Countries</div>
       <div id="countryWorkspaceList" class="country-workspace-list"></div>
       <div class="sync-card">
         <span id="syncDot" class="sync-dot"></span>
-        <div><strong id="syncText">Connecting…</strong><small>Firestore: planner/v3</small></div>
+        <div class="sync-info">
+          <strong id="syncText">Connecting…</strong>
+          <small id="signedInUser">Signed out</small>
+          <button id="logoutBtn" class="logout-btn" type="button">Log out</button>
+        </div>
       </div>
     </aside>
 
@@ -194,6 +225,7 @@
   </dialog>
 
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script>
 window.SEED_EMPLOYEES = [
@@ -1142,17 +1174,77 @@ $("monthViewBtn").onclick=()=>{state.calendarMode="month";renderCalendar()};
 $("dayViewBtn").onclick=()=>{state.calendarMode="day";renderCalendar()};
 document.querySelectorAll(".team-btn").forEach(b=>b.onclick=()=>{state.team=b.dataset.team;document.querySelectorAll(".team-btn").forEach(x=>x.classList.toggle("active",x===b));renderAll()});
 
-// Render country navigation immediately from the bundled employee list.
-if(!Object.keys(state.employees).length){
-  state.employees=Object.fromEntries((window.SEED_EMPLOYEES||[]).map(e=>[
-    e.id,{...e,country:normalizeCountry(e.country)}
-  ]));
+let plannerInitialised=false;
+
+function prepareLocalState(){
+  if(!Object.keys(state.employees).length){
+    state.employees=Object.fromEntries((window.SEED_EMPLOYEES||[]).map(e=>[
+      e.id,{...e,country:normalizeCountry(e.country)}
+    ]));
+  }
+  if(!Object.keys(state.projects).length) state.projects=structuredClone(defaultProjects);
+  ensureSelectedCountry();
+  updateWorkspaceVisibility();
+  renderAll();
 }
-if(!Object.keys(state.projects).length) state.projects=structuredClone(defaultProjects);
-ensureSelectedCountry();
-updateWorkspaceVisibility();
-renderAll();
-initialise();
+
+function friendlyAuthError(error){
+  const code=error?.code||"";
+  const messages={
+    "auth/invalid-credential":"Incorrect email or password.",
+    "auth/user-not-found":"Incorrect email or password.",
+    "auth/wrong-password":"Incorrect email or password.",
+    "auth/invalid-email":"Enter a valid email address.",
+    "auth/too-many-requests":"Too many attempts. Please try again later.",
+    "auth/user-disabled":"This account has been disabled."
+  };
+  return messages[code]||error?.message||"Unable to sign in.";
+}
+
+const auth=firebase.auth();
+
+$("loginForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const email=$("loginEmail").value.trim();
+  const password=$("loginPassword").value;
+  $("loginMessage").textContent="Signing in…";
+  try{
+    await auth.signInWithEmailAndPassword(email,password);
+    $("loginMessage").textContent="";
+  }catch(error){
+    console.error("Login failed:",error);
+    $("loginMessage").textContent=friendlyAuthError(error);
+  }
+});
+
+$("logoutBtn").onclick=async()=>{
+  try{
+    await auth.signOut();
+  }catch(error){
+    console.error("Logout failed:",error);
+  }
+};
+
+auth.onAuthStateChanged(async user=>{
+  if(user){
+    $("loginScreen").hidden=true;
+    $("plannerApp").hidden=false;
+    $("signedInUser").textContent=user.email||"Signed in";
+    prepareLocalState();
+    if(!plannerInitialised){
+      plannerInitialised=true;
+      await initialise();
+    }else{
+      renderAll();
+    }
+  }else{
+    $("plannerApp").hidden=true;
+    $("loginScreen").hidden=false;
+    $("signedInUser").textContent="Signed out";
+    $("loginPassword").value="";
+    $("loginEmail").focus();
+  }
+});
 </script>
 </body>
 </html>
