@@ -53,3 +53,9 @@ Open the site in Safari or Chrome and choose **Add to Home Screen**.
 - Country workspaces now contain only Team Calendar, Manpower and Projects.
 - Reduced mobile spacing, card sizes and control heights to minimise scrolling.
 - Service-worker cache upgraded to v3.
+
+
+## PWA v4 fix
+- Countries heading and add-country button now use a two-column grid.
+- The add button has fixed reserved space and cannot overlap the heading.
+- Improved spacing on narrow mobile screens.

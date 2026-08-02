@@ -64,3 +64,35 @@ body.authenticated .login-screen{display:none!important}
   .metric{display:block}
   .metric strong{margin-top:2px}
 }
+
+.side-label-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 32px!important;
+  align-items:center!important;
+  gap:10px!important;
+  padding:0 6px 8px 10px!important;
+}
+.side-label-row .side-label{
+  padding:0!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.country-add-btn{
+  position:static!important;
+  width:32px!important;
+  height:32px!important;
+  min-width:32px!important;
+  min-height:32px!important;
+  padding:0!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center!important;
+  line-height:1!important;
+}
+
+@media(max-width:800px){
+  .side-label-row{grid-template-columns:minmax(0,1fr) 36px;gap:12px;padding-right:4px}
+  .country-add-btn{width:36px;height:36px;min-width:36px;min-height:36px}
+}
