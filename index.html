@@ -107,6 +107,21 @@
         </div>
         <div id="projectGrid" class="project-grid"></div>
       </section>
+
+      <section id="issuesView" class="view" hidden>
+        <div class="section-header">
+          <div><h2>Project Issues</h2><p>Track quality, installation, testing and site rectification issues.</p></div>
+          <button id="addIssueBtn" class="btn primary">+ Issue</button>
+        </div>
+        <div id="issueMetrics" class="metrics issue-metrics"></div>
+        <div class="issue-filters panel">
+          <input id="issueSearch" placeholder="Search issue no., title, location or owner…">
+          <select id="issueProjectFilter"><option value="all">All projects</option></select>
+          <select id="issueStatusFilter"><option value="all">All statuses</option></select>
+          <select id="issuePriorityFilter"><option value="all">All priorities</option></select>
+        </div>
+        <div id="issueTable" class="panel table-panel"></div>
+      </section>
     </main>
   </div>
 
@@ -163,6 +178,38 @@
       <div class="modal-actions">
         <span></span><span></span>
         <button type="button" class="btn" data-close="employeeDialog">Cancel</button>
+        <button type="submit" class="btn primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="issueDialog">
+    <form id="issueForm" class="modal issue-modal">
+      <h2 id="issueDialogTitle">Add Project Issue</h2>
+      <input id="issueId" type="hidden">
+      <div class="two-col">
+        <label>Project<select id="issueProject" required></select></label>
+        <label>Issue No.<input id="issueNumber" readonly></label>
+      </div>
+      <label>Issue title<input id="issueTitle" required maxlength="120"></label>
+      <label>Description<textarea id="issueDescription" rows="4" placeholder="Describe the issue, observation and impact"></textarea></label>
+      <div class="two-col">
+        <label>Category<select id="issueCategory"><option>Quality</option><option>Installation</option><option>Commissioning</option><option>Design</option><option>Safety</option><option>Material</option><option>Vendor</option><option>Client</option><option>Documentation</option><option>Testing</option><option>Others</option></select></label>
+        <label>Priority<select id="issuePriority"><option>Critical</option><option>High</option><option selected>Medium</option><option>Low</option></select></label>
+      </div>
+      <div class="two-col">
+        <label>Status<select id="issueStatus"><option>Open</option><option>Assigned</option><option>In Progress</option><option>Waiting Vendor</option><option>Waiting Client</option><option>Rectified</option><option>Closed</option></select></label>
+        <label>Assigned to<select id="issueOwner"></select></label>
+      </div>
+      <div class="two-col">
+        <label>Location<input id="issueLocation" placeholder="e.g. GEN-A3 / Level 2"></label>
+        <label>Due date<input id="issueDueDate" type="date"></label>
+      </div>
+      <label>Rectification action<textarea id="issueAction" rows="3" placeholder="Action taken or required"></textarea></label>
+      <div class="modal-actions">
+        <button id="deleteIssueBtn" type="button" class="btn danger" hidden>Delete</button>
+        <span></span>
+        <button type="button" class="btn" data-close="issueDialog">Cancel</button>
         <button type="submit" class="btn primary">Save</button>
       </div>
     </form>
