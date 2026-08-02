@@ -101,7 +101,7 @@
       right: "18px",
       bottom: "18px",
       zIndex: "9999",
-      maxWidth: "420px",
+      maxWidth: "460px",
       padding: "9px 13px",
       borderRadius: "8px",
       background: "#172a58",
@@ -118,25 +118,23 @@
       if (failed) console.error(message);
     }
 
-    function safeClone(value) {
-      return JSON.parse(JSON.stringify(value, function (_key, item) {
-        return item === undefined ? null : item;
-      }));
-    }
-
     function getPlannerState() {
-      return safeClone({
-        version: 4,
+      return {
+        version: 5,
         projects: Object.assign({}, projectFullNames),
         projectShortNames: Object.assign({}, projectNames),
+
+        // Firestore does not support nested arrays.
+        // Store manpower as objects instead of arrays.
         engineers: engineers.map(function (person) {
-          return [
-            person[0] || "",
-            person[1] || "",
-            person[2] || "",
-            person[3] || "project"
-          ];
+          return {
+            name: person[0] || "",
+            initials: person[1] || "",
+            title: person[2] || "",
+            team: person[3] || "project"
+          };
         }),
+
         assignments: assignments.map(function (item) {
           return {
             date: item.date || "",
@@ -146,7 +144,7 @@
             status: item.status || "Confirmed"
           };
         })
-      });
+      };
     }
 
     function applyPlannerState(data) {
@@ -172,18 +170,28 @@
       }
 
       if (Array.isArray(data.engineers)) {
+        const converted = data.engineers.map(function (person) {
+          // Support both the new object format and any older array format.
+          if (Array.isArray(person)) {
+            return [
+              person[0] || "",
+              person[1] || "",
+              person[2] || "",
+              person[3] || "project"
+            ];
+          }
+
+          return [
+            (person && person.name) || "",
+            (person && person.initials) || "",
+            (person && person.title) || "",
+            (person && person.team) || "project"
+          ];
+        });
+
         engineers.splice.apply(
           engineers,
-          [0, engineers.length].concat(
-            data.engineers.map(function (person) {
-              return [
-                (person && person[0]) || "",
-                (person && person[1]) || "",
-                (person && person[2]) || "",
-                (person && person[3]) || "project"
-              ];
-            })
-          )
+          [0, engineers.length].concat(converted)
         );
       }
 
@@ -236,6 +244,7 @@
       }
 
       show("Firebase: connecting to Firestore…");
+
       const db = firebase.firestore();
       db.settings({ ignoreUndefinedProperties: true });
 
@@ -246,7 +255,13 @@
       let saveTimer = null;
 
       function serializedState(state) {
-        return JSON.stringify(safeClone(state));
+        return JSON.stringify({
+          version: state.version || 5,
+          projects: state.projects || {},
+          projectShortNames: state.projectShortNames || {},
+          engineers: state.engineers || [],
+          assignments: state.assignments || []
+        });
       }
 
       async function saveNow() {
@@ -254,6 +269,7 @@
 
         const state = getPlannerState();
         const serialized = serializedState(state);
+
         if (serialized === lastState) return;
 
         show("Firebase: saving online…");
@@ -270,74 +286,80 @@
 
       show("Firebase: reading shared planner…");
 
-      plannerRef.get().then(function (snapshot) {
-        if (snapshot.exists) {
-          applyingRemote = true;
-          applyPlannerState(snapshot.data());
-          lastState = serializedState(getPlannerState());
-          applyingRemote = false;
-          show("Firebase: loaded online");
-        } else {
-          return saveNow();
-        }
-      }).then(function () {
-        plannerRef.onSnapshot(
-          function (snapshot) {
-            if (!snapshot.exists) return;
-
-            const incoming = snapshot.data();
-            const serialized = serializedState({
-              version: incoming.version || 4,
-              projects: incoming.projects || {},
-              projectShortNames: incoming.projectShortNames || {},
-              engineers: incoming.engineers || [],
-              assignments: incoming.assignments || []
-            });
-
-            if (serialized === lastState) return;
-
+      plannerRef.get()
+        .then(function (snapshot) {
+          if (snapshot.exists) {
             applyingRemote = true;
-            applyPlannerState(incoming);
+            applyPlannerState(snapshot.data());
             lastState = serializedState(getPlannerState());
             applyingRemote = false;
-            show("Firebase: updated online");
-          },
-          function (error) {
-            console.error("Firestore listener error:", error);
-            show(
-              "Firebase listener failed: " +
-              (error.code || "") + " " + (error.message || error),
-              true
-            );
+            show("Firebase: loaded online");
+          } else {
+            return saveNow();
           }
-        );
+        })
+        .then(function () {
+          plannerRef.onSnapshot(
+            function (snapshot) {
+              if (!snapshot.exists) return;
 
-        setInterval(function () {
-          if (applyingRemote) return;
+              const incoming = snapshot.data();
 
-          const serialized = serializedState(getPlannerState());
-          if (serialized === lastState) return;
+              const normalizedIncoming = {
+                version: incoming.version || 5,
+                projects: incoming.projects || {},
+                projectShortNames: incoming.projectShortNames || {},
+                engineers: incoming.engineers || [],
+                assignments: incoming.assignments || []
+              };
 
-          clearTimeout(saveTimer);
-          saveTimer = setTimeout(function () {
-            saveNow().catch(function (error) {
-              console.error("Firestore save error:", error);
+              const serialized = serializedState(normalizedIncoming);
+
+              if (serialized === lastState) return;
+
+              applyingRemote = true;
+              applyPlannerState(incoming);
+              lastState = serializedState(getPlannerState());
+              applyingRemote = false;
+              show("Firebase: updated online");
+            },
+            function (error) {
+              console.error("Firestore listener error:", error);
               show(
-                "Firebase save failed: " +
+                "Firebase listener failed: " +
                 (error.code || "") + " " + (error.message || error),
                 true
               );
-            });
-          }, 350);
-        }, 500);
-      }).catch(function (error) {
-        console.error("Firestore startup error:", error);
-        show(
-          "Firebase read failed: " +
-          (error.code || "") + " " + (error.message || error),
-          true
-        );
-      });
+            }
+          );
+
+          setInterval(function () {
+            if (applyingRemote) return;
+
+            const serialized = serializedState(getPlannerState());
+            if (serialized === lastState) return;
+
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(function () {
+              saveNow().catch(function (error) {
+                console.error("Firestore save error:", error);
+                show(
+                  "Firebase save failed: " +
+                  (error.code || "") + " " + (error.message || error),
+                  true
+                );
+              });
+            }, 350);
+          }, 500);
+        })
+        .catch(function (error) {
+          console.error("Firestore startup error:", error);
+          show(
+            "Firebase read failed: " +
+            (error.code || "") + " " + (error.message || error),
+            true
+          );
+        });
 
     } catch (error) {
       console.error("Firebase startup error:", error);
