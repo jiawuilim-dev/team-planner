@@ -59,3 +59,16 @@ Open the site in Safari or Chrome and choose **Add to Home Screen**.
 - Countries heading and add-country button now use a two-column grid.
 - The add button has fixed reserved space and cannot overlap the heading.
 - Improved spacing on narrow mobile screens.
+
+## Project Issues Tracking
+
+The package includes a country-based Project Issues module with:
+
+- Project, category, priority, status and owner fields
+- Due dates, locations, descriptions and rectification actions
+- Search and project/status/priority filters
+- Open, critical, overdue and closed issue metrics
+- Create, edit and delete actions
+- Firebase Firestore synchronization with the existing planner data
+
+For GitHub Pages, upload the contents of this folder to the repository root so `index.html` is at the top level.

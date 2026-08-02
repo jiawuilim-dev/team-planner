@@ -96,3 +96,14 @@ body.authenticated .login-screen{display:none!important}
   .side-label-row{grid-template-columns:minmax(0,1fr) 36px;gap:12px;padding-right:4px}
   .country-add-btn{width:36px;height:36px;min-width:36px;min-height:36px}
 }
+
+/* Project issues tracking */
+.issue-filters{display:grid;grid-template-columns:minmax(240px,2fr) repeat(3,minmax(150px,1fr));gap:10px;margin-bottom:14px;padding:12px}
+.issue-metrics{grid-template-columns:repeat(4,1fr)}
+.issue-title-cell strong,.issue-title-cell small{display:block}.issue-title-cell small{margin-top:4px;color:var(--muted);max-width:360px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.issue-number{font-weight:800;color:#244cb9}.status-chip,.priority-chip{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+.status-open,.status-assigned{background:#e8efff;color:#244cb9}.status-in-progress{background:#fff4d6;color:#8a5b00}.status-waiting-vendor,.status-waiting-client{background:#f2eaff;color:#6841a8}.status-rectified{background:#e5f7ef;color:#14734b}.status-closed{background:#edf0f5;color:#536074}
+.priority-critical{background:#fde7e7;color:#b42318}.priority-high{background:#fff0df;color:#b54708}.priority-medium{background:#fff8d9;color:#8a6500}.priority-low{background:#e7f7ed;color:#19703d}
+.overdue-text{color:var(--red);font-weight:800}.issue-modal textarea{width:100%;resize:vertical;font:inherit;border:1px solid var(--line);border-radius:8px;padding:10px;box-sizing:border-box}
+@media(max-width:1000px){.issue-filters{grid-template-columns:1fr 1fr}.issue-metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.issue-filters{grid-template-columns:1fr}.issue-metrics{grid-template-columns:repeat(2,1fr)}#issueTable .data-table{min-width:1050px}}
