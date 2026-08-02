@@ -4,12 +4,12 @@ const db=firebase.firestore();
 db.settings({ignoreUndefinedProperties:true});
 const stateRef=db.collection("planner").doc("v2");
 
-const state={projects:{},employees:{},assignments:{},team:"all",calendarCountry:"all",manpowerCountry:"all",month:new Date()};
+const state={projects:{},employees:{},assignments:{},team:"all",country:"",month:new Date()};
 const defaultProjects={
-  alpha:{id:"alpha",name:"Alpha Site Expansion",active:true},
-  beta:{id:"beta",name:"Beta Maintenance",active:true},
-  gamma:{id:"gamma",name:"Gamma Commissioning",active:true},
-  delta:{id:"delta",name:"Delta Retrofit",active:true}
+  alpha:{id:"alpha",name:"Alpha Site Expansion",country:"Malaysia",active:true},
+  beta:{id:"beta",name:"Beta Maintenance",country:"Malaysia",active:true},
+  gamma:{id:"gamma",name:"Gamma Commissioning",country:"Thailand",active:true},
+  delta:{id:"delta",name:"Delta Retrofit",country:"Indonesia",active:true}
 };
 const $=id=>document.getElementById(id);
 const pad=n=>String(n).padStart(2,"0");
@@ -17,7 +17,7 @@ const dateKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`
 const uid=prefix=>prefix+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,7);
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const employeeValues=()=>Object.values(state.employees).filter(x=>x&&x.active!==false);
-const projectValues=()=>Object.values(state.projects).filter(x=>x&&x.active!==false);
+const projectValues=()=>Object.values(state.projects).filter(x=>x&&x.active!==false&&x.country===state.country);
 const assignmentValues=()=>Object.values(state.assignments).filter(Boolean);
 let applyingRemote=false,saveTimer=null,lastSerialized="";
 
@@ -47,7 +47,9 @@ async function initialise(){
       state.assignments={};
     }
     if(!Object.keys(state.projects).length) state.projects=structuredClone(defaultProjects);
+    Object.values(state.projects).forEach(project=>{if(!project.country)project.country="Malaysia"});
     mergeSeedEmployees();
+    ensureSelectedCountry();
     await saveState();
     stateRef.onSnapshot(s=>{
       if(!s.exists)return;
@@ -70,41 +72,36 @@ async function initialise(){
 function countryOptions(){
   return [...new Set(employeeValues().map(e=>e.country).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
 }
-function populateCountryFilters(){
+function ensureSelectedCountry(){
   const countries=countryOptions();
-  $("calendarCountryTabs").innerHTML=[
-    `<button class="country-tab ${state.calendarCountry==="all"?"active":""}" data-calendar-country="all">All Countries</button>`,
-    ...countries.map(c=>`<button class="country-tab ${state.calendarCountry===c?"active":""}" data-calendar-country="${esc(c)}">${esc(c)}</button>`)
-  ].join("");
-  document.querySelectorAll("[data-calendar-country]").forEach(button=>{
+  if(!state.country || !countries.includes(state.country)) state.country=countries[0]||"Malaysia";
+}
+function renderCountryNavigation(){
+  ensureSelectedCountry();
+  $("sidebarCountryList").innerHTML=countryOptions().map(country=>
+    `<button class="country-nav-btn ${state.country===country?"active":""}" data-country="${esc(country)}">${esc(country)}</button>`
+  ).join("");
+  document.querySelectorAll("[data-country]").forEach(button=>{
     button.onclick=()=>{
-      state.calendarCountry=button.dataset.calendarCountry;
-      populateCountryFilters();
-      renderCalendar();
-      populateSelects();
+      state.country=button.dataset.country;
+      renderAll();
     };
   });
-
-  const options=['<option value="all">All Countries</option>']
-    .concat(countries.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`))
-    .join("");
-  $("manpowerCountry").innerHTML=options;
-  $("manpowerCountry").value=state.manpowerCountry;
+  $("activeCountryLabel").textContent=state.country;
+  const activeView=document.querySelector(".nav-btn.active")?.dataset.view||"calendar";
+  $("viewSub").textContent=activeView==="calendar"?`${state.country} manpower assignments`:activeView==="manpower"?`${state.country} employee directory`:`${state.country} projects`;
 }
 function filteredEmployees(){
   return employeeValues().filter(e=>
-    (state.team==="all"||e.team===state.team) &&
-    (state.calendarCountry==="all"||e.country===state.calendarCountry)
+    e.country===state.country &&
+    (state.team==="all"||e.team===state.team)
   );
 }
 function manpowerEmployees(){
-  return employeeValues().filter(e=>
-    (state.team==="all"||e.team===state.team) &&
-    (state.manpowerCountry==="all"||e.country===state.manpowerCountry)
-  );
+  return filteredEmployees();
 }
 function filteredAssignments(){const allowed=new Set(filteredEmployees().map(e=>e.id));return assignmentValues().filter(a=>allowed.has(a.employeeId));}
-function renderAll(){populateCountryFilters();renderCalendar();renderEmployees();renderProjects();populateSelects();}
+function renderAll(){renderCountryNavigation();renderCalendar();renderEmployees();renderProjects();populateSelects();populateProjectCountry();}
 
 function renderCalendar(){
   const y=state.month.getFullYear(),m=state.month.getMonth();
@@ -143,10 +140,14 @@ function renderEmployees(){
 function renderProjects(){
   $("projectList").innerHTML=projectValues().map(p=>{
     const count=assignmentValues().filter(a=>a.projectId===p.id).length;
-    return `<article class="project-card"><header><strong>${esc(p.name)}</strong></header><p>${count} assignment${count===1?"":"s"}</p></article>`;
+    return `<article class="project-card"><header><strong>${esc(p.name)}</strong></header><p>${esc(p.country)} · ${count} assignment${count===1?"":"s"}</p></article>`;
   }).join("")||`<div class="empty">No projects.</div>`;
 }
 
+function populateProjectCountry(){
+  $("projectCountry").innerHTML=countryOptions().map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+  $("projectCountry").value=state.country;
+}
 function populateSelects(){
   $("assignmentProject").innerHTML=projectValues().map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");
   $("assignmentEmployee").innerHTML=filteredEmployees().map(e=>`<option value="${e.id}">${esc(e.name)} — ${esc(e.position)}</option>`).join("");
@@ -220,27 +221,26 @@ $("employeeForm").onsubmit=e=>{
 };
 $("projectForm").onsubmit=e=>{
   e.preventDefault();const id=uid("project");
-  state.projects[id]={id,name:$("projectName").value.trim(),active:true};
+  state.projects[id]={id,name:$("projectName").value.trim(),country:$("projectCountry").value,active:true};
   $("projectName").value="";$("projectDialog").close();scheduleSave();renderAll();
 };
 
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).close());
 $("addAssignmentBtn").onclick=()=>openAssignment();
 $("addEmployeeBtn").onclick=()=>openEmployee();
-$("addProjectBtn").onclick=()=>$("projectDialog").showModal();
+$("addProjectBtn").onclick=()=>{populateProjectCountry();$("projectDialog").showModal()};
 $("employeeSearch").oninput=renderEmployees;
 $("prevMonth").onclick=()=>{state.month.setMonth(state.month.getMonth()-1);renderCalendar()};
 $("nextMonth").onclick=()=>{state.month.setMonth(state.month.getMonth()+1);renderCalendar()};
 $("todayBtn").onclick=()=>{state.month=new Date();renderCalendar()};
-$("manpowerCountry").onchange=()=>{state.manpowerCountry=$("manpowerCountry").value;renderEmployees()};
-document.querySelectorAll(".team-btn").forEach(b=>b.onclick=()=>{state.team=b.dataset.team;$("manpowerCountry").onchange=()=>{state.manpowerCountry=$("manpowerCountry").value;renderEmployees()};
-document.querySelectorAll(".team-btn").forEach(x=>x.classList.toggle("active",x===b));renderAll()});
+document.querySelectorAll(".team-btn").forEach(b=>b.onclick=()=>{state.team=b.dataset.team;document.querySelectorAll(".team-btn").forEach(x=>x.classList.toggle("active",x===b));renderAll()});
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("active",x===b));
   const v=b.dataset.view;
   $("calendarView").hidden=v!=="calendar";$("manpowerView").hidden=v!=="manpower";$("projectsView").hidden=v!=="projects";
   $("viewTitle").textContent=v==="calendar"?"Team Calendar":v==="manpower"?"Manpower":"Projects";
-  $("viewSub").textContent=v==="calendar"?"Shared manpower assignments":v==="manpower"?"Employee directory and team allocation":"Manage available projects";
+  $("viewSub").textContent=v==="calendar"?`${state.country} manpower assignments`:v==="manpower"?`${state.country} employee directory`:`${state.country} projects`;
+  $("activeCountryLabel").textContent=state.country;
   $("addAssignmentBtn").hidden=v!=="calendar";
 });
 initialise();

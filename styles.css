@@ -5,3 +5,10 @@
 .country-tab{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 11px;font-weight:700;cursor:pointer;color:var(--muted)}
 .country-tab.active{background:#e8efff;border-color:#b9cafa;color:#244cb9}
 @media(max-width:800px){.country-tabs{width:100%;overflow:auto;flex-wrap:nowrap;padding-bottom:3px}.country-tab{white-space:nowrap}}
+
+.sidebar-label{padding:0 10px 8px;color:#8fa3d2;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px}
+.country-section{margin-bottom:20px}
+.sidebar-country-list{display:grid;gap:5px}
+.country-nav-btn{border:0;background:transparent;color:#c5d0ec;padding:10px 12px;border-radius:9px;text-align:left;font-weight:700;cursor:pointer}
+.country-nav-btn:hover,.country-nav-btn.active{background:#2b4179;color:#fff}
+.active-country-label{display:inline-flex;margin-top:8px;padding:4px 8px;border-radius:20px;background:#e8efff;color:#244cb9;font-size:12px;font-weight:800}

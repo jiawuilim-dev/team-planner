@@ -10,6 +10,11 @@
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">field<span>flow</span><small>V2</small></div>
+      <div class="country-section">
+        <div class="sidebar-label">Country</div>
+        <div id="sidebarCountryList" class="sidebar-country-list"></div>
+      </div>
+      <div class="sidebar-label">Workspace</div>
       <nav>
         <button class="nav-btn active" data-view="calendar">Team Calendar</button>
         <button class="nav-btn" data-view="manpower">Manpower</button>
@@ -26,9 +31,9 @@
         <div>
           <h1 id="viewTitle">Team Calendar</h1>
           <p id="viewSub">Shared manpower assignments</p>
+          <div id="activeCountryLabel" class="active-country-label"></div>
         </div>
         <div class="actions">
-          <div id="calendarCountryTabs" class="country-tabs" aria-label="Calendar countries"></div>
           <div class="team-toggle">
             <button class="team-btn active" data-team="all">All</button>
             <button class="team-btn" data-team="project">Project</button>
@@ -65,7 +70,6 @@
           <button class="btn primary" id="addEmployeeBtn">+ Manpower</button>
         </div>
         <div class="toolbar-row">
-          <select id="manpowerCountry" class="country-select" aria-label="Filter manpower by country"></select>
           <input id="employeeSearch" placeholder="Search name, position, country…">
         </div>
         <div id="employeeList" class="table-card"></div>
@@ -130,6 +134,7 @@
     <form id="projectForm" class="modal">
       <h2>Add Project</h2>
       <label>Project name<input id="projectName" required></label>
+      <label>Country<select id="projectCountry" required></select></label>
       <div class="modal-actions">
         <span></span><span></span>
         <button type="button" class="btn" data-close="projectDialog">Cancel</button>
