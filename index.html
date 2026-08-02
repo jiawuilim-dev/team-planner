@@ -101,7 +101,7 @@
       right: "18px",
       bottom: "18px",
       zIndex: "9999",
-      maxWidth: "460px",
+      maxWidth: "480px",
       padding: "9px 13px",
       borderRadius: "8px",
       background: "#172a58",
@@ -118,15 +118,29 @@
       if (failed) console.error(message);
     }
 
+    function toObjectMap(items, prefix, mapper) {
+      const result = {};
+      items.forEach(function (item, index) {
+        result[prefix + String(index).padStart(5, "0")] = mapper(item, index);
+      });
+      return result;
+    }
+
+    function orderedValues(map) {
+      if (!map || typeof map !== "object") return [];
+      return Object.keys(map).sort().map(function (key) {
+        return map[key];
+      });
+    }
+
     function getPlannerState() {
       return {
-        version: 5,
+        version: 6,
         projects: Object.assign({}, projectFullNames),
         projectShortNames: Object.assign({}, projectNames),
 
-        // Firestore does not support nested arrays.
-        // Store manpower as objects instead of arrays.
-        engineers: engineers.map(function (person) {
+        // Store as maps, not arrays, to eliminate nested-array errors.
+        engineersMap: toObjectMap(engineers, "person_", function (person) {
           return {
             name: person[0] || "",
             initials: person[1] || "",
@@ -135,7 +149,7 @@
           };
         }),
 
-        assignments: assignments.map(function (item) {
+        assignmentsMap: toObjectMap(assignments, "assignment_", function (item) {
           return {
             date: item.date || "",
             project: item.project || "",
@@ -169,9 +183,16 @@
         Object.assign(projectNames, data.projects);
       }
 
-      if (Array.isArray(data.engineers)) {
-        const converted = data.engineers.map(function (person) {
-          // Support both the new object format and any older array format.
+      let incomingEngineers = [];
+
+      if (data.engineersMap && typeof data.engineersMap === "object") {
+        incomingEngineers = orderedValues(data.engineersMap);
+      } else if (Array.isArray(data.engineers)) {
+        incomingEngineers = data.engineers;
+      }
+
+      if (incomingEngineers.length) {
+        const converted = incomingEngineers.map(function (person) {
           if (Array.isArray(person)) {
             return [
               person[0] || "",
@@ -195,20 +216,28 @@
         );
       }
 
-      if (Array.isArray(data.assignments)) {
+      let incomingAssignments = [];
+
+      if (data.assignmentsMap && typeof data.assignmentsMap === "object") {
+        incomingAssignments = orderedValues(data.assignmentsMap);
+      } else if (Array.isArray(data.assignments)) {
+        incomingAssignments = data.assignments;
+      }
+
+      if (incomingAssignments.length || data.assignmentsMap) {
+        const convertedAssignments = incomingAssignments.map(function (item) {
+          return {
+            date: (item && item.date) || "",
+            project: (item && item.project) || "",
+            engineer: (item && item.engineer) || "",
+            hours: Number((item && item.hours) || 0),
+            status: (item && item.status) || "Confirmed"
+          };
+        });
+
         assignments.splice.apply(
           assignments,
-          [0, assignments.length].concat(
-            data.assignments.map(function (item) {
-              return {
-                date: (item && item.date) || "",
-                project: (item && item.project) || "",
-                engineer: (item && item.engineer) || "",
-                hours: Number((item && item.hours) || 0),
-                status: (item && item.status) || "Confirmed"
-              };
-            })
-          )
+          [0, assignments.length].concat(convertedAssignments)
         );
       }
 
@@ -256,11 +285,11 @@
 
       function serializedState(state) {
         return JSON.stringify({
-          version: state.version || 5,
+          version: state.version || 6,
           projects: state.projects || {},
           projectShortNames: state.projectShortNames || {},
-          engineers: state.engineers || [],
-          assignments: state.assignments || []
+          engineersMap: state.engineersMap || {},
+          assignmentsMap: state.assignmentsMap || {}
         });
       }
 
@@ -274,10 +303,12 @@
 
         show("Firebase: saving online…");
 
+        // overwrite removes old array fields from earlier versions
         await plannerRef.set(
           Object.assign({}, state, {
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-          })
+          }),
+          { merge: false }
         );
 
         lastState = serialized;
@@ -291,29 +322,32 @@
           if (snapshot.exists) {
             applyingRemote = true;
             applyPlannerState(snapshot.data());
-            lastState = serializedState(getPlannerState());
             applyingRemote = false;
-            show("Firebase: loaded online");
-          } else {
+
+            // Immediately migrate any older document to the map format.
             return saveNow();
           }
+
+          return saveNow();
         })
         .then(function () {
+          lastState = serializedState(getPlannerState());
+
           plannerRef.onSnapshot(
             function (snapshot) {
               if (!snapshot.exists) return;
 
               const incoming = snapshot.data();
 
-              const normalizedIncoming = {
-                version: incoming.version || 5,
+              const normalized = {
+                version: incoming.version || 6,
                 projects: incoming.projects || {},
                 projectShortNames: incoming.projectShortNames || {},
-                engineers: incoming.engineers || [],
-                assignments: incoming.assignments || []
+                engineersMap: incoming.engineersMap || {},
+                assignmentsMap: incoming.assignmentsMap || {}
               };
 
-              const serialized = serializedState(normalizedIncoming);
+              const serialized = serializedState(normalized);
 
               if (serialized === lastState) return;
 
@@ -351,6 +385,8 @@
               });
             }, 350);
           }, 500);
+
+          show("Firebase: saved online");
         })
         .catch(function (error) {
           console.error("Firestore startup error:", error);
