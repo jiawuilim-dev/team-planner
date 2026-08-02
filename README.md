@@ -45,3 +45,11 @@ Open the site in Safari or Chrome and choose **Add to Home Screen**.
 - Login screen is fixed to the viewport and cannot scroll into the planner.
 - Calendar date buttons use reset browser styling and centered text.
 - Service-worker cache upgraded to v2.
+
+
+## PWA v3 changes
+- Added country creation button.
+- Removed Dashboard and Reports from every country.
+- Country workspaces now contain only Team Calendar, Manpower and Projects.
+- Reduced mobile spacing, card sizes and control heights to minimise scrolling.
+- Service-worker cache upgraded to v3.

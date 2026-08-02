@@ -39,7 +39,10 @@
         <button id="closeMenuBtn" class="icon-button light">×</button>
       </div>
 
-      <div class="side-label">Countries</div>
+      <div class="side-label-row">
+        <div class="side-label">Countries</div>
+        <button id="addCountryBtn" class="country-add-btn" type="button">＋</button>
+      </div>
       <div id="countryTree" class="country-tree"></div>
 
       <div class="account-card">
@@ -68,14 +71,6 @@
           <button id="primaryActionBtn" class="btn primary">+ Assignment</button>
         </div>
       </header>
-
-      <section id="dashboardView" class="view" hidden>
-        <div class="metrics" id="dashboardMetrics"></div>
-        <div class="panel">
-          <h2>Upcoming assignments</h2>
-          <div id="upcomingList"></div>
-        </div>
-      </section>
 
       <section id="calendarView" class="view">
         <div class="metrics" id="calendarMetrics"></div>
@@ -112,16 +107,21 @@
         </div>
         <div id="projectGrid" class="project-grid"></div>
       </section>
-
-      <section id="reportsView" class="view" hidden>
-        <div class="metrics" id="reportMetrics"></div>
-        <div class="panel">
-          <h2>Project allocation</h2>
-          <div id="allocationList"></div>
-        </div>
-      </section>
     </main>
   </div>
+
+
+  <dialog id="countryDialog">
+    <form id="countryForm" class="modal compact-modal">
+      <h2>Add Country</h2>
+      <label>Country name<input id="countryName" required maxlength="50"></label>
+      <div class="modal-actions">
+        <span></span><span></span>
+        <button type="button" class="btn" data-close="countryDialog">Cancel</button>
+        <button type="submit" class="btn primary">Add</button>
+      </div>
+    </form>
+  </dialog>
 
   <dialog id="assignmentDialog">
     <form id="assignmentForm" class="modal">
