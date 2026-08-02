@@ -38,3 +38,10 @@ git push
 
 ## Install on mobile
 Open the site in Safari or Chrome and choose **Add to Home Screen**.
+
+
+## PWA v2 fixes
+- Planner is fully hidden until authentication succeeds.
+- Login screen is fixed to the viewport and cannot scroll into the planner.
+- Calendar date buttons use reset browser styling and centered text.
+- Service-worker cache upgraded to v2.

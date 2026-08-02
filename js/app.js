@@ -107,5 +107,32 @@ $("teamFilter").onclick=e=>{const b=e.target.closest("[data-team]");if(!b)return
 function openMenu(){$("sidebar").classList.add("open");$("backdrop").classList.add("visible")}function closeMenu(){$("sidebar").classList.remove("open");$("backdrop").classList.remove("visible")}$("menuBtn").onclick=openMenu;$("closeMenuBtn").onclick=closeMenu;$("backdrop").onclick=closeMenu;
 $("logoutBtn").onclick=()=>auth.signOut();
 $("loginForm").onsubmit=async e=>{e.preventDefault();$("loginMessage").textContent="Signing in…";$("loginBtn").disabled=true;try{await auth.signInWithEmailAndPassword($("loginEmail").value.trim(),$("loginPassword").value)}catch(err){$("loginMessage").textContent=err.code==="auth/invalid-credential"?"Incorrect email or password.":`${err.code||""} ${err.message||err}`}finally{$("loginBtn").disabled=false}};
-auth.onAuthStateChanged(async user=>{if(user){$("loginScreen").hidden=true;$("app").hidden=false;$("userEmail").textContent=user.email||"";seedLocal();renderAll();if(!appStarted){appStarted=true;initialiseFirestore()}}else{$("app").hidden=true;$("loginScreen").hidden=false;$("loginMessage").textContent="";$("loginPassword").value=""}});
+auth.onAuthStateChanged(async user=>{
+  if(user){
+    $("loginScreen").hidden=true;
+    $("loginScreen").style.display="none";
+    $("app").hidden=false;
+    $("app").style.display="";
+    document.body.classList.add("authenticated");
+    document.body.classList.remove("signed-out");
+    document.body.style.overflow="";
+    $("userEmail").textContent=user.email||"";
+    seedLocal();
+    renderAll();
+    if(!appStarted){
+      appStarted=true;
+      initialiseFirestore();
+    }
+  }else{
+    $("app").hidden=true;
+    $("app").style.display="none";
+    $("loginScreen").hidden=false;
+    $("loginScreen").style.display="grid";
+    document.body.classList.remove("authenticated");
+    document.body.classList.add("signed-out");
+    document.body.style.overflow="hidden";
+    $("loginMessage").textContent="";
+    $("loginPassword").value="";
+  }
+});
 if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(console.error));
