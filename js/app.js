@@ -90,8 +90,93 @@ function formatAssignmentPeriod(projectId,employeeIds,targetDate){
   const fmt=d=>new Date(d+"T00:00").toLocaleDateString("en",{day:"numeric",month:"short"});
   return start===end?fmt(unique[start]):`${fmt(unique[start])} – ${fmt(unique[end])}`;
 }
-function renderDay(){const key=dateKey(state.date),items=filteredAssignments().filter(a=>a.date===key),groups=Object.values(items.reduce((o,a)=>{(o[a.projectId]||(o[a.projectId]={projectId:a.projectId,items:[]})).items.push(a);return o},{}));$("periodLabel").textContent=state.date.toLocaleDateString("en",{weekday:"long",day:"numeric",month:"long",year:"numeric"});$("calendarMetrics").innerHTML=metric("Assignments",items.length)+metric("Manpower",new Set(items.map(a=>a.employeeId)).size)+metric("Planned hours",items.reduce((t,a)=>t+Number(a.hours||0),0)+"h");$("calendarContainer").innerHTML=`<div class="daily-view"><div class="daily-summary"><span class="daily-pill">${items.length} assignments</span><span class="daily-pill">${groups.length} projects</span></div><div class="daily-list">${groups.map(g=>{const p=state.projects[g.projectId],hours=g.items.reduce((t,a)=>t+Number(a.hours||0),0),pending=g.items.some(a=>a.status==="Pending"),period=formatAssignmentPeriod(g.projectId,g.items.map(a=>a.employeeId),key),hoursPerPerson=g.items.length?Math.round((hours/g.items.length)*10)/10:0;return `<div class="daily-card ${pending?"pending":""}"><div class="assignment-period"><span>Assignment period</span><strong>${esc(period)}</strong></div><div><h3>${esc(p?.name||"Unknown")}</h3><p>${g.items.length} manpower · ${hoursPerPerson}h per person today</p><p>${g.items.map(a=>esc(state.employees[a.employeeId]?.name||"Unknown")).join(", ")}</p></div><div class="row-actions">${g.items.map(a=>`<button class="small-btn" data-edit-assignment="${a.id}" title="Edit ${esc(state.employees[a.employeeId]?.name||"assignment")}">${esc(state.employees[a.employeeId]?.initials||"Edit")}</button>`).join("")}</div></div>`}).join("")||'<div class="empty-state"><strong>No assignments for this day</strong><span>Add an assignment or select another date.</span></div>'}</div></div>`}
-function renderManpower(){const q=$("employeeSearch").value.trim().toLowerCase(),rows=filteredEmployees().filter(e=>[e.name,e.position,e.department,e.company,e.status].join(" ").toLowerCase().includes(q));$("employeeTable").innerHTML=rows.length?`<table class="data-table manpower-table"><thead><tr><th>Employee</th><th>Position</th><th>Department</th><th>Status</th><th class="actions-col">Actions</th></tr></thead><tbody>${rows.map(e=>{const status=e.status||"Available",statusClass=status.toLowerCase().replace(/[^a-z]+/g,"-");return `<tr><td><span class="person-cell"><span class="avatar">${esc(e.initials)}</span><span class="person-details"><strong>${esc(e.name)}</strong><small>${esc(e.company||e.country||"")}</small></span></span></td><td>${esc(e.position)}</td><td>${esc(e.department)}</td><td><span class="status-badge ${statusClass}">${esc(status)}</span></td><td class="actions-col"><details class="action-menu"><summary aria-label="Employee actions">⋮</summary><div class="action-menu-list"><button type="button" data-edit-employee="${e.id}">Edit employee</button><button type="button" class="delete" data-delete-employee="${e.id}">Delete employee</button></div></details></td></tr>`}).join("")}</tbody></table>`:"<div class="empty-state"><strong>No matching manpower</strong><span>Try another name, position, department, company, or status.</span></div>"}
+function renderDay(){
+  const key=dateKey(state.date);
+  const items=filteredAssignments().filter(a=>a.date===key);
+  const groups=Object.values(items.reduce((o,a)=>{
+    (o[a.projectId]||(o[a.projectId]={projectId:a.projectId,items:[]})).items.push(a);
+    return o;
+  },{}));
+
+  $("periodLabel").textContent=state.date.toLocaleDateString("en",{
+    weekday:"long",day:"numeric",month:"long",year:"numeric"
+  });
+  $("calendarMetrics").innerHTML=
+    metric("Assignments",items.length)+
+    metric("Manpower",new Set(items.map(a=>a.employeeId)).size)+
+    metric("Planned hours",items.reduce((t,a)=>t+Number(a.hours||0),0)+"h");
+
+  const cards=groups.map(g=>{
+    const p=state.projects[g.projectId];
+    const hours=g.items.reduce((t,a)=>t+Number(a.hours||0),0);
+    const pending=g.items.some(a=>a.status==="Pending");
+    const period=formatAssignmentPeriod(g.projectId,g.items.map(a=>a.employeeId),key);
+    const hoursPerPerson=g.items.length?Math.round((hours/g.items.length)*10)/10:0;
+    const employeeNames=g.items.map(a=>esc(state.employees[a.employeeId]?.name||"Unknown")).join(", ");
+    const actionButtons=g.items.map(a=>{
+      const employee=state.employees[a.employeeId];
+      return `<button class="small-btn" data-edit-assignment="${a.id}" title="Edit ${esc(employee?.name||"assignment")}">${esc(employee?.initials||"Edit")}</button>`;
+    }).join("");
+
+    return `<div class="daily-card ${pending?"pending":""}">
+      <div class="assignment-period">
+        <span>Assignment period</span>
+        <strong>${esc(period)}</strong>
+      </div>
+      <div>
+        <h3>${esc(p?.name||"Unknown")}</h3>
+        <p>${g.items.length} manpower · ${hoursPerPerson}h per person today</p>
+        <p>${employeeNames}</p>
+      </div>
+      <div class="row-actions">${actionButtons}</div>
+    </div>`;
+  }).join("");
+
+  const emptyState=`<div class="empty-state">
+    <strong>No assignments for this day</strong>
+    <span>Add an assignment or select another date.</span>
+  </div>`;
+
+  $("calendarContainer").innerHTML=`<div class="daily-view">
+    <div class="daily-summary">
+      <span class="daily-pill">${items.length} assignments</span>
+      <span class="daily-pill">${groups.length} projects</span>
+    </div>
+    <div class="daily-list">${cards||emptyState}</div>
+  </div>`;
+}
+
+function renderManpower(){
+  const q=$("employeeSearch").value.trim().toLowerCase();
+  const rows=filteredEmployees().filter(e=>
+    [e.name,e.position,e.department,e.company,e.status].join(" ").toLowerCase().includes(q)
+  );
+
+  if(!rows.length){
+    $("employeeTable").innerHTML=`<div class="empty-state">
+      <strong>No matching manpower</strong>
+      <span>Try another name, position, department, company, or status.</span>
+    </div>`;
+    return;
+  }
+
+  const body=rows.map(e=>{
+    const status=e.status||"Available";
+    const statusClass=status.toLowerCase().replace(/[^a-z]+/g,"-");
+    return `<tr>
+      <td><span class="person-cell"><span class="avatar">${esc(e.initials)}</span><span class="person-details"><strong>${esc(e.name)}</strong><small>${esc(e.company||e.country||"")}</small></span></span></td>
+      <td>${esc(e.position)}</td>
+      <td>${esc(e.department)}</td>
+      <td><span class="status-badge ${statusClass}">${esc(status)}</span></td>
+      <td class="actions-col"><details class="action-menu"><summary aria-label="Employee actions">⋮</summary><div class="action-menu-list"><button type="button" data-edit-employee="${e.id}">Edit employee</button><button type="button" class="delete" data-delete-employee="${e.id}">Delete employee</button></div></details></td>
+    </tr>`;
+  }).join("");
+
+  $("employeeTable").innerHTML=`<table class="data-table manpower-table">
+    <thead><tr><th>Employee</th><th>Position</th><th>Department</th><th>Status</th><th class="actions-col">Actions</th></tr></thead>
+    <tbody>${body}</tbody>
+  </table>`;
+}
 function renderProjects(){$("projectGrid").innerHTML=projects().map(p=>{const count=assignments().filter(a=>a.projectId===p.id).length;return `<article class="project-card"><header><strong>${esc(p.name)}</strong><div class="row-actions"><button class="small-btn" data-edit-project="${p.id}">Edit</button><button class="small-btn delete" data-delete-project="${p.id}">Delete</button></div></header><p>${count} assignment${count===1?"":"s"}</p></article>`}).join("")||"<p>No projects.</p>"}
 function populateAssignmentSelects(){$("assignmentProject").innerHTML=projects().map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");$("assignmentEmployee").innerHTML=filteredEmployees().map(e=>`<option value="${e.id}">${esc(e.name)} — ${esc(e.position)}</option>`).join("")}
 function openAssignment(id=null,date=null){populateAssignmentSelects();const a=id?state.assignments[id]:null;$("assignmentDialogTitle").textContent=a?"Edit Assignment":"New Assignment";$("assignmentId").value=a?.id||"";$("assignmentProject").value=a?.projectId||projects()[0]?.id||"";$("assignmentEmployee").value=a?.employeeId||filteredEmployees()[0]?.id||"";$("assignmentStart").value=a?.date||date||dateKey(new Date());$("assignmentEnd").value=a?.date||date||dateKey(new Date());$("assignmentHours").value=a?.hours||8;$("assignmentStatus").value=a?.status||"Confirmed";$("deleteAssignmentBtn").hidden=!a;$("assignmentDialog").showModal()}
